@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — MMGA Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-light: #f5f5f5;
+      --gray-mid: #888888;
+      --gray-border: rgba(10,10,10,0.1);
+      --white-border: rgba(255,255,255,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-light);
+      color: var(--black);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* ── Logo bar ── */
+    #logo-bar {
+      background: white;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(10,10,10,0.07);
+    }
+    #logo-bar img { height: 82px; width: auto; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: var(--black);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 48px;
+      border-bottom: 1px solid var(--white-border);
+    }
+    .nav-links { display: flex; gap: 44px; align-items: center; }
+    .nav-link {
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link.active { color: #fff; }
+
+    /* ── Labels ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray-mid);
+    }
+    .section-label-white {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* ── Page Intro ── */
+    #page-intro {
+      background: white;
+      padding: 72px 40px 64px;
+      border-bottom: 1px solid var(--gray-border);
+    }
+    .intro-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+    }
+    .intro-left h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 11vw, 172px);
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      margin-top: 16px;
+    }
+    .intro-right { padding-bottom: 6px; }
+    .intro-right p {
+      font-size: 15px;
+      line-height: 1.75;
+      color: rgba(10,10,10,0.55);
+      font-weight: 300;
+      max-width: 420px;
+    }
+    .intro-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--gray-border);
+    }
+    .intro-meta .meta-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 38px;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      line-height: 1;
+    }
+    .intro-meta .meta-label {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(10,10,10,0.4);
+      font-weight: 500;
+    }
+
+    /* ── Projects grid ── */
+    #all-projects {
+      background: var(--gray-light);
+      padding: 40px 40px 96px;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* Card base */
+    .p-card {
+      position: relative;
+      overflow: hidden;
+      background: #111;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+    }
+    .p-card.w2 { grid-column: span 2; }
+    .p-card.w3 { grid-column: span 3; }
+    .p-card { aspect-ratio: 1 / 1; }
+    .p-card.h-lg, .p-card.h-md, .p-card.h-sm { height: auto; }
+
+    .p-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .p-card:hover img { transform: scale(1.04); }
+
+    /* Default label — fades out on hover */
+    .p-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 56px 28px 24px;
+      background: linear-gradient(to top, rgba(10,10,10,0.78) 0%, transparent 100%);
+      color: white;
+      transition: opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .p-card:hover .p-label { opacity: 0; }
+
+    .p-label-num {
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.15em;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .p-label-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .p-label-loc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.04em;
+      font-weight: 300;
+    }
+
+    /* Hover overlay — fades in on hover */
+    .p-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+        rgba(10,10,10,0.90) 0%,
+        rgba(10,10,10,0.25) 55%,
+        transparent 100%
+      );
+      opacity: 0;
+      transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px;
+    }
+    .p-card:hover .p-overlay { opacity: 1; }
+
+    .p-overlay-num {
+      font-size: 10px;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.15em;
+      font-weight: 500;
+      margin-bottom: 7px;
+    }
+    .p-overlay-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      letter-spacing: 0.01em;
+      color: white;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .p-overlay-loc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.03em;
+      font-weight: 300;
+      margin-bottom: 14px;
+    }
+    .p-overlay-type {
+      font-size: 10px;
+      color: rgba(255,255,255,0.32);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* ── Contact ── */
+    #contact {
+      background: var(--black);
+      padding: 96px 40px;
+    }
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    #contact h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 7vw, 112px);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: white;
+      margin-top: 16px;
+    }
+    .contact-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.75;
+      font-weight: 300;
+      margin-top: 24px;
+      max-width: 340px;
+    }
+    .contact-detail {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .contact-detail a {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .contact-detail a:hover { color: white; }
+    .contact-detail a span {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      width: 60px;
+      flex-shrink: 0;
+    }
+
+    .form-group { margin-bottom: 14px; }
+    .form-input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 3px;
+      padding: 14px 18px;
+      color: white;
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-font-smoothing: antialiased;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.25); }
+    .form-input:focus { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.06); }
+    textarea.form-input { resize: none; min-height: 140px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-submit {
+      width: 100%;
+      padding: 16px;
+      background: white;
+      color: var(--black);
+      border: none;
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .form-submit:hover { opacity: 0.9; }
+    .form-submit:active { transform: scale(0.99); }
+
+        /* ── Footer ── */
+    footer {
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 64px 48px 32px;
+    }
+    .footer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .footer-brand img {
+      height: 36px;
+      width: auto;
+      filter: invert(1);
+      opacity: 0.9;
+    }
+    .footer-brand-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.85);
+    }
+    .footer-socials {
+      display: flex;
+      gap: 10px;
+      list-style: none;
+    }
+    .footer-social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+      text-decoration: none;
+    }
+    .footer-social-btn:hover { background: rgba(255,255,255,0.14); }
+    .footer-social-btn img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      filter: invert(1);
+      opacity: 0.75;
+    }
+    .footer-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 28px 0 24px;
+    }
+    .footer-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: 16px;
+    }
+    .footer-copy {
+      font-size: 13px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+    }
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 28px;
+      justify-content: flex-end;
+      list-style: none;
+    }
+    .footer-nav a {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: rgba(255,255,255,0.85); }
+    @media (max-width: 600px) {
+      footer { padding: 48px 20px 28px; }
+      .footer-bottom { grid-template-columns: 1fr; }
+      .footer-nav { justify-content: flex-start; margin-top: 16px; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  transform 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      nav { padding: 0 20px; }
+      .nav-links { gap: 24px; }
+      #page-intro { padding: 48px 20px 48px; }
+      .intro-inner { grid-template-columns: 1fr; gap: 28px; }
+      #all-projects { padding: 20px 20px 60px; }
+      .projects-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .p-card.w2, .p-card.w3 { grid-column: span 2; }
+      /* square aspect-ratio handles sizing */
+      #contact { padding: 60px 20px; }
+      .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+      footer { padding: 24px 20px; flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGO BAR ── -->
+<div id="logo-bar">
+  <a href="/"><img src="brand_assets/logout 4.png" alt="MMGA Studio" /></a>
+</div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/#services" class="nav-link">Services</a>
+    <a href="/#team" class="nav-link">Studio</a>
+    <a href="/#contact" class="nav-link">Contact</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile menu overlay -->
+<div id="mobile-menu" aria-hidden="true">
+  <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  </button>
+  <div class="mobile-menu-inner">
+    <a href="/" class="mobile-nav-link">Home</a>
+    <a href="/#services" class="mobile-nav-link">Services</a>
+    <a href="/#team" class="mobile-nav-link">Studio</a>
+    <a href="/#contact" class="mobile-nav-link">Contact</a>
+  </div>
+</div>
+
+
+<!-- ── PAGE INTRO ── -->
+<section id="page-intro">
+  <div class="intro-inner">
+    <div class="intro-left reveal">
+      <div class="section-label">Portfolio</div>
+      <h1>Projects</h1>
+    </div>
+    <div class="intro-right reveal">
+      <p>A curated collection of architectural visualization work — from residential complexes and private residences to industrial developments</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── PROJECTS GRID ── -->
+<section id="all-projects">
+  <div class="projects-grid">
+
+    <!-- 01 – Residential Complex (wide, left) -->
+    <a href="/residentialcomplex1" class="p-card w2 h-md reveal">
+      <img src="brand_assets/Projects/1/project1_1.jpg" alt="Residential Complex" />
+      <div class="p-label">
+        <div class="p-label-num">01</div>
+        <div class="p-label-title">Residential Complex</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">01</div>
+        <div class="p-overlay-title">Residential Complex</div>
+        <div class="p-overlay-type">Exterior · Residential</div>
+      </div>
+    </a>
+
+    <!-- 02 – Residential Complex (narrow, right) -->
+    <a href="/residentialcomplex2" class="p-card h-md reveal">
+      <img src="brand_assets/Projects/2/project2_1.jpg" alt="Residential Complex" />
+      <div class="p-label">
+        <div class="p-label-num">02</div>
+        <div class="p-label-title">Residential Complex</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">02</div>
+        <div class="p-overlay-title">Residential Complex</div>
+        <div class="p-overlay-type">Exterior · Residential</div>
+      </div>
+    </a>
+
+    <!-- 03 – Residential Complex (narrow, left) -->
+    <a href="/residentialcomplex3" class="p-card h-md reveal">
+      <img src="brand_assets/Projects/3/project3_1.jpg" alt="Residential Complex" />
+      <div class="p-label">
+        <div class="p-label-num">03</div>
+        <div class="p-label-title">Residential Complex</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">03</div>
+        <div class="p-overlay-title">Residential Complex</div>
+        <div class="p-overlay-type">Exterior · Residential</div>
+      </div>
+    </a>
+
+    <!-- 04 – Industrial Hall (wide, right) -->
+    <a href="/industrial" class="p-card w2 h-md reveal">
+      <img src="brand_assets/Projects/4/project4_1.jpg" alt="Industrial Hall" />
+      <div class="p-label">
+        <div class="p-label-num">04</div>
+        <div class="p-label-title">Industrial Hall</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">04</div>
+        <div class="p-overlay-title">Industrial Hall</div>
+        <div class="p-overlay-type">Exterior · Industrial</div>
+      </div>
+    </a>
+
+    <!-- 05 – Interior Design (full width) -->
+    <a href="/interiordesign" class="p-card w3 h-lg reveal">
+      <img src="brand_assets/Projects/5/project5_1.jpg" alt="Interior Design" />
+      <div class="p-label">
+        <div class="p-label-num">05</div>
+        <div class="p-label-title">Interior Design</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">05</div>
+        <div class="p-overlay-title">Interior Design</div>
+        <div class="p-overlay-type">Interior · Residential</div>
+      </div>
+    </a>
+
+    <!-- 06 – Private House (narrow, left) -->
+    <a href="/privatehouse1" class="p-card h-sm reveal">
+      <img src="brand_assets/Projects/6/project5_1.jpg" alt="Private House" />
+      <div class="p-label">
+        <div class="p-label-num">06</div>
+        <div class="p-label-title">Private House</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">06</div>
+        <div class="p-overlay-title">Private House</div>
+        <div class="p-overlay-type">Exterior · Private Residence</div>
+      </div>
+    </a>
+
+    <!-- 07 – Private House (wide, right) -->
+    <a href="/privatehouse2" class="p-card w2 h-sm reveal">
+      <img src="brand_assets/Projects/7/project7_1.jpg" alt="Private House" />
+      <div class="p-label">
+        <div class="p-label-num">07</div>
+        <div class="p-label-title">Private House</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">07</div>
+        <div class="p-overlay-title">Private House</div>
+        <div class="p-overlay-type">Exterior · Private Residence</div>
+      </div>
+    </a>
+
+    <!-- 08 – Private House (wide, left) -->
+    <a href="/privatehouse3" class="p-card w2 h-md reveal">
+      <img src="brand_assets/Projects/8/project8_1.jpg" alt="Private House" />
+      <div class="p-label">
+        <div class="p-label-num">08</div>
+        <div class="p-label-title">Private House</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">08</div>
+        <div class="p-overlay-title">Private House</div>
+        <div class="p-overlay-type">Exterior · Private Residence</div>
+      </div>
+    </a>
+
+    <!-- 09 – Private House (narrow, right) -->
+    <a href="/privatehouse4" class="p-card h-md reveal">
+      <img src="brand_assets/Projects/9/project9_01.jpg" alt="Private House" />
+      <div class="p-label">
+        <div class="p-label-num">09</div>
+        <div class="p-label-title">Private House</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">09</div>
+        <div class="p-overlay-title">Private House</div>
+        <div class="p-overlay-type">Exterior · Private Residence</div>
+      </div>
+    </a>
+
+    <!-- 10 – Private House (full width) -->
+    <a href="/privatehouse5" class="p-card w3 h-lg reveal">
+      <img src="brand_assets/Projects/10/project10_1.jpg" alt="Private House" />
+      <div class="p-label">
+        <div class="p-label-num">10</div>
+        <div class="p-label-title">Private House</div>
+      </div>
+      <div class="p-overlay">
+        <div class="p-overlay-num">10</div>
+        <div class="p-overlay-title">Private House</div>
+        <div class="p-overlay-type">Exterior · Private Residence</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+
+<!-- ── LET'S TALK ── -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-left reveal">
+      <div class="section-label-white">Get in touch</div>
+      <h2>Let's<br/>talk</h2>
+      <p class="contact-sub">Tell us about your project. We'll get back to you within 24 hours with an initial scope and quote.</p>
+      <div class="contact-detail">
+        <a href="mailto:hello@mmgastudio.com">
+          <span>Email</span>
+          hello@mmgastudio.com
+        </a>
+        <a href="#">
+          <span>Based</span>
+          Bucharest, Romania
+        </a>
+        <a href="#">
+          <span>Available</span>
+          Worldwide
+        </a>
+      </div>
+    </div>
+    <div class="reveal">
+      <form onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group">
+            <input class="form-input" type="text" placeholder="First name" />
+          </div>
+          <div class="form-group">
+            <input class="form-input" type="text" placeholder="Last name" />
+          </div>
+        </div>
+        <div class="form-group">
+          <input class="form-input" type="email" placeholder="Email address" />
+        </div>
+        <div class="form-group">
+          <input class="form-input" type="text" placeholder="Project type (e.g. Residential exterior)" />
+        </div>
+        <div class="form-group">
+          <textarea class="form-input" placeholder="Tell us about your project..."></textarea>
+        </div>
+        <button class="form-submit" type="submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FOOTER ── -->
+<!-- ────────────────── FOOTER ────────────────── -->
+<footer>
+  <div class="footer-top">
+    <a href="/" class="footer-brand">
+      <img src="brand_assets/logout 4.png" alt="MMGA Studio" />
+      
+    </a>
+    <ul class="footer-socials">
+      <li><a href="https://www.instagram.com/mmgastudio" target="_blank" aria-label="Instagram" class="footer-social-btn"><img src="brand_assets/infos/instagram.png" alt="Instagram" /></a></li>
+      <li><a href="https://www.linkedin.com/company/mmgastudio" target="_blank" aria-label="LinkedIn" class="footer-social-btn"><img src="brand_assets/infos/linkedin.png" alt="LinkedIn" /></a></li>
+      <li><a href="https://www.behance.net/mmgastudio1" target="_blank" aria-label="Behance" class="footer-social-btn"><img src="brand_assets/infos/Behance.jpg" alt="Behance" /></a></li>
+      <li><a href="https://www.tiktok.com/@mmgastudio" target="_blank" aria-label="TikTok" class="footer-social-btn"><img src="brand_assets/infos/tiktok.png" alt="TikTok" /></a></li>
+    </ul>
+  </div>
+  <hr class="footer-divider" />
+  <div class="footer-bottom">
+    <div class="footer-copy">
+      <div>© 2023–2026 MMGA Studio.</div>
+      <div>All rights reserved.</div>
+    </div>
+    <ul class="footer-nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#team">Studio</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const siblings = [...entry.target.parentElement.querySelectorAll('.reveal')];
+        const idx = siblings.indexOf(entry.target);
+        entry.target.style.transitionDelay = (idx * 0.06) + 's';
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.01 });
+  reveals.forEach(el => observer.observe(el));
+
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+      el.style.transitionDelay = '0s';
+      el.classList.add('visible');
+    });
+  }, 1200);
+</script>
+<button id="scroll-top" aria-label="Back to top"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M3 8l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><style>#scroll-top{position:fixed;bottom:32px;right:32px;z-index:999;width:44px;height:44px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.12);border-radius:50%;color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s,background 0.2s,color 0.2s}#scroll-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}#scroll-top:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.3)}#scroll-top:active{transform:scale(0.94)}
+    /* ── Mobile hamburger nav ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      position: relative;
+      z-index: 10;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: rgba(255,255,255,0.8);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s;
+      transform-origin: center;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    #mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 380;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    #mobile-menu.open { opacity: 1; pointer-events: auto; }
+    .mobile-menu-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .mobile-nav-link {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 14vw, 72px);
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      line-height: 1.2;
+      padding: 4px 0;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: color 0.2s, opacity 0.45s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
+    }
+    #mobile-menu.open .mobile-nav-link { opacity: 1; transform: translateY(0); }
+    #mobile-menu.open .mobile-nav-link:nth-child(1) { transition-delay: 0.05s; }
+    #mobile-menu.open .mobile-nav-link:nth-child(2) { transition-delay: 0.10s; }
+    #mobile-menu.open .mobile-nav-link:nth-child(3) { transition-delay: 0.15s; }
+    #mobile-menu.open .mobile-nav-link:nth-child(4) { transition-delay: 0.20s; }
+    .mobile-nav-link:hover, .mobile-nav-link:active { color: rgba(255,255,255,0.5); }
+    .mobile-menu-close {
+      position: absolute;
+      top: 36px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.2s, border-color 0.2s;
+    }
+    #mobile-menu.open .mobile-menu-close {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+      transition-delay: 0.22s;
+    }
+    .mobile-menu-close:hover { color: white; border-color: rgba(255,255,255,0.25); }
+
+    @media (max-width: 768px) {
+      #logo-bar { height: 64px; }
+      #logo-bar img { height: 46px; }
+      nav { height: 52px; padding: 0 20px; justify-content: center; }
+      .nav-links { display: none !important; }
+      .nav-hamburger { display: flex; }
+      .p-label { opacity: 1 !important; }
+      .p-card:hover .p-label { opacity: 1 !important; }
+      .p-card:hover .p-overlay { opacity: 0 !important; }
+      .p-card.w2, .p-card.w3 { grid-column: span 1; }
+      footer { padding: 48px 20px 32px; }
+      .footer-bottom { grid-template-columns: 1fr; }
+      .footer-nav { justify-content: flex-start; margin-top: 16px; }
+    }
+
+    @media (max-width: 768px) {
+      #page-intro { padding: 40px 20px 36px; }
+      .intro-inner { grid-template-columns: 1fr; gap: 20px; }
+      #all-projects { padding: 20px 20px 64px; }
+      .projects-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .p-card.w2, .p-card.w3 { grid-column: span 1; }
+      .p-card.h-lg { height: 260px; }
+      .p-card.h-md { height: 220px; }
+      .p-card.h-sm { height: 200px; }
+      .p-label { opacity: 1 !important; }
+      .p-card:hover .p-label { opacity: 1 !important; }
+    }
+    @media (max-width: 480px) {
+      .projects-grid { grid-template-columns: 1fr; }
+      .p-card.h-lg, .p-card.h-md { height: 260px; }
+      .p-card.h-sm { height: 220px; }
+    }
+
+  </style><script>(function(){var btn=document.getElementById("scroll-top");window.addEventListener("scroll",function(){if(window.scrollY>400)btn.classList.add("visible");else btn.classList.remove("visible");},{passive:true});btn.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});})();</script>
+<script>
+  (function() {
+    var hamburger = document.getElementById('nav-hamburger');
+    var mobileMenu = document.getElementById('mobile-menu');
+    if (!hamburger || !mobileMenu) return;
+    function toggleMenu(open) {
+      hamburger.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', String(open));
+      mobileMenu.classList.toggle('open', open);
+      mobileMenu.setAttribute('aria-hidden', String(!open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+    hamburger.addEventListener('click', function() {
+      toggleMenu(!hamburger.classList.contains('open'));
+    });
+    mobileMenu.querySelectorAll('.mobile-nav-link').forEach(function(link) {
+      link.addEventListener('click', function() { toggleMenu(false); });
+    });
+    var closeBtn = document.getElementById('mobile-menu-close');
+    if (closeBtn) closeBtn.addEventListener('click', function() { toggleMenu(false); });
+  })();
+</script>
+</body>
+</html>

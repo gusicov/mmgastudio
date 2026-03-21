@@ -1,0 +1,7 @@
+node_modules/
+temporary screenshots/
+# Large reference/screenshot files in root
+Captură de ecran*
+nixtio.com*
+cargoarchitecture*
+_tmp_ss.mjs

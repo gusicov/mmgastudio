@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Residential Complex — MMGA Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-light: #f5f5f5;
+      --gray-mid: #888888;
+      --gray-border: rgba(10,10,10,0.08);
+      --white-border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: #fff; color: var(--black); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    #logo-bar { background: white; height: 110px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(10,10,10,0.07); }
+    #logo-bar img { height: 82px; width: auto; }
+    nav { position: sticky; top: 0; z-index: 200; background: var(--black); height: 72px; display: flex; align-items: center; justify-content: center; padding: 0 48px; border-bottom: 1px solid var(--white-border); }
+    .nav-links { display: flex; gap: 44px; align-items: center; }
+    .nav-link { font-size: 15px; font-weight: 400; letter-spacing: 0.01em; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.2s; }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+    .hero-image { width: 100%; display: block; line-height: 0; }
+    .hero-image img { width: 100%; height: auto; display: block; }
+    .project-info-section { padding: 88px 240px 88px; background: var(--black); }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .project-label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .project-title-large { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 6vw, 80px); line-height: 0.9; letter-spacing: -0.01em; color: #fff; margin-bottom: 32px; }
+    .project-desc { font-size: 16px; font-weight: 300; line-height: 1.75; color: rgba(255,255,255,0.5); max-width: 440px; }
+    .info-right { display: flex; flex-direction: column; justify-content: space-between; }
+    .meta-row { display: flex; align-items: baseline; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .meta-row:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+    .meta-key { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+    .meta-val { font-size: 14px; font-weight: 400; color: rgba(255,255,255,0.8); }
+    .view-all-btn { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.35); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 2px; transition: color 0.2s, border-color 0.2s; }
+    .view-all-btn:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+    .editorial { background: #fff; padding-bottom: 40px; }
+    .img-full { padding: 72px 240px 0; }
+    .img-full img { width: 100%; height: auto; display: block; }
+    .img-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px 240px 0; }
+    .img-pair img { width: 100%; height: auto; display: block; }
+    .img-offset { padding: 72px 240px 0; display: grid; grid-template-columns: 1fr 2fr; }
+    .img-offset img { grid-column: 2; width: 100%; height: auto; display: block; }
+    .pull-quote { padding: 96px 240px; text-align: center; }
+    .pull-quote blockquote { font-size: clamp(20px, 2.5vw, 28px); font-weight: 300; font-style: italic; line-height: 1.55; color: rgba(10,10,10,0.55); }
+    .next-project-bar { padding: 40px 240px 48px; display: flex; justify-content: flex-end; background: #fff; border-top: 1px solid var(--gray-border); }
+    .next-project-link { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--black); transition: opacity 0.2s; }
+    .next-project-link:hover { opacity: 0.55; }
+    .next-project-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-mid); }
+    .next-project-name { font-size: 14px; font-weight: 500; letter-spacing: 0.01em; color: var(--black); }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.2); letter-spacing: 0.06em; }
+    @media (max-width: 1100px) {
+      .project-info-section { padding: 60px 80px; }
+      .img-full, .img-offset, .img-pair { padding-left: 80px; padding-right: 80px; }
+      .pull-quote { padding: 72px 80px; }
+      .next-project-bar { padding-left: 80px; padding-right: 80px; }
+    }
+    @media (max-width: 700px) {
+      .project-info-section { padding: 40px 32px 56px; }
+      .info-grid { grid-template-columns: 1fr; gap: 40px; }
+      .img-full, .img-offset { padding: 40px 32px 0; }
+      .img-pair { padding: 16px 32px 0; gap: 12px; }
+      .img-offset { grid-template-columns: 1fr; }
+      .img-offset img { grid-column: 1; }
+      .pull-quote { padding: 56px 32px; }
+      .next-project-bar { padding: 32px 32px 40px; }
+    }
+  
+    /* ── Footer ── */
+    footer {
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 64px 48px 32px;
+    }
+    .footer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .footer-brand img {
+      height: 36px;
+      width: auto;
+      filter: invert(1);
+      opacity: 0.9;
+    }
+    .footer-socials {
+      display: flex;
+      gap: 10px;
+      list-style: none;
+    }
+    .footer-social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+      text-decoration: none;
+    }
+    .footer-social-btn:hover { background: rgba(255,255,255,0.14); }
+    .footer-social-btn img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      filter: invert(1);
+      opacity: 0.75;
+    }
+    .footer-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 28px 0 24px;
+    }
+    .footer-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: 16px;
+    }
+    .footer-copy {
+      font-size: 13px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+    }
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 28px;
+      justify-content: flex-end;
+      list-style: none;
+    }
+    .footer-nav a {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: rgba(255,255,255,0.85); }
+    @media (max-width: 600px) {
+      footer { padding: 48px 20px 28px; }
+      .footer-bottom { grid-template-columns: 1fr; }
+      .footer-nav { justify-content: flex-start; margin-top: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="logo-bar">
+  <a href="/"><img src="/brand_assets/logout 4.png" alt="MMGA Studio" /></a>
+</div>
+
+<nav>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/#services" class="nav-link">Services</a>
+    <a href="/#team" class="nav-link">Studio</a>
+    <a href="/#contact" class="nav-link">Contact</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile menu overlay -->
+<div id="mobile-menu" aria-hidden="true">
+  <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  </button>
+  <div class="mobile-menu-inner">
+    <a href="/" class="mobile-nav-link">Home</a>
+    <a href="/#services" class="mobile-nav-link">Services</a>
+    <a href="/#team" class="mobile-nav-link">Studio</a>
+    <a href="/#contact" class="mobile-nav-link">Contact</a>
+  </div>
+</div>
+
+<div class="hero-image">
+  <img src="/brand_assets/Projects/2/project2_1.jpg" alt="Residential Complex" />
+</div>
+
+<section class="project-info-section">
+  <div class="info-grid">
+    <div class="info-left">
+      <div class="project-label">02 — Exterior Rendering</div>
+      <h1 class="project-title-large">Residential<br/>Complex</h1>
+      <p class="project-desc">A residential complex developed around a shared green axis. Clean orthogonal volumes are balanced by generous glazing and a rhythm of balconies overlooking the internal garden.</p>
+    </div>
+    <div class="info-right">
+      <div style="display:flex;justify-content:flex-end;">
+        <a href="/projects" class="view-all-btn">View all projects</a>
+      </div>
+      <div>
+        <div class="meta-row"><span class="meta-key">Type</span><span class="meta-val">Exterior Rendering</span></div>
+        <div class="meta-row"><span class="meta-key">Category</span><span class="meta-val">Residential Complex</span></div>
+        <div class="meta-row"><span class="meta-key">Year</span><span class="meta-val">2025</span></div>
+        <div class="meta-row"><span class="meta-key">Location</span><span class="meta-val">Romania</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="editorial">
+
+  <div class="img-full">
+    <img src="/brand_assets/Projects/2/project2_2.jpg" alt="Residential Complex" />
+  </div>
+
+  <div class="pull-quote">
+    <blockquote>Form follows the landscape — buildings that breathe with the terrain around them.</blockquote>
+  </div>
+
+  <div class="img-pair">
+    <img src="/brand_assets/Projects/2/project2_3.jpg" alt="Residential Complex" />
+    <img src="/brand_assets/Projects/2/project2_4.jpg" alt="Residential Complex" />
+  </div>
+
+  <div class="pull-quote">
+    <blockquote>Every facade is a conversation between the built and the natural.</blockquote>
+  </div>
+
+  <div class="img-full">
+    <img src="/brand_assets/Projects/2/project2_6.jpg" alt="Residential Complex" />
+  </div>
+
+  <div class="img-offset">
+    <img src="/brand_assets/Projects/2/project2_7.jpg" alt="Residential Complex" />
+  </div>
+
+</div>
+
+<div class="next-project-bar">
+  <a href="/residentialcomplex3" class="next-project-link">
+    <span class="next-project-label">Next Project</span>
+    <span class="next-project-name">Residential Complex</span>
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+</div>
+
+<!-- ────────────────── FOOTER ────────────────── -->
+<footer>
+  <div class="footer-top">
+    <a href="/" class="footer-brand">
+      <img src="brand_assets/logout 4.png" alt="MMGA Studio" />
+      
+    </a>
+    <ul class="footer-socials">
+      <li><a href="https://www.instagram.com/mmgastudio" target="_blank" aria-label="Instagram" class="footer-social-btn"><img src="brand_assets/infos/instagram.png" alt="Instagram" /></a></li>
+      <li><a href="https://www.linkedin.com/company/mmgastudio" target="_blank" aria-label="LinkedIn" class="footer-social-btn"><img src="brand_assets/infos/linkedin.png" alt="LinkedIn" /></a></li>
+      <li><a href="https://www.behance.net/mmgastudio1" target="_blank" aria-label="Behance" class="footer-social-btn"><img src="brand_assets/infos/Behance.jpg" alt="Behance" /></a></li>
+      <li><a href="https://www.tiktok.com/@mmgastudio" target="_blank" aria-label="TikTok" class="footer-social-btn"><img src="brand_assets/infos/tiktok.png" alt="TikTok" /></a></li>
+    </ul>
+  </div>
+  <hr class="footer-divider" />
+  <div class="footer-bottom">
+    <div class="footer-copy">
+      <div>© 2023–2026 MMGA Studio.</div>
+      <div>All rights reserved.</div>
+    </div>
+    <ul class="footer-nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#team">Studio</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+
+<button id="scroll-top" aria-label="Back to top"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M3 8l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+<style>
+  #scroll-top{position:fixed;bottom:32px;right:32px;z-index:999;width:44px;height:44px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.12);border-radius:50%;color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s,background 0.2s,color 0.2s}
+  #scroll-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+  #scroll-top:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.3)}
+  #scroll-top:active{transform:scale(0.94)}
+
+    /* ── Mobile hamburger nav ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      position: relative;
+      z-index: 10;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: rgba(255,255,255,0.8);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s;
+      transform-origin: center;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    #mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 380;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    #mobile-menu.open { opacity: 1; pointer-events: auto; }
+    .mobile-menu-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .mobile-nav-link {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 14vw, 72px);
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      line-height: 1.2;
+      padding: 4px 0;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: color 0.2s, opacity 0.45s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
+    }
+    #mobile-menu.open .mobile-nav-link { opacity: 1; transform: translateY(0); }
+    #mobile-menu.open .mobile-nav-link:nth-child(1) { transition-delay: 0.05s; }
+    #mobile-menu.open .mobile-nav-link:nth-child(2) { transition-delay: 0.10s; }
+    #mobile-menu.open .mobile-nav-link:nth-child(3) { transition-delay: 0.15s; }
+    #mobile-menu.open .mobile-nav-link:nth-child(4) { transition-delay: 0.20s; }
+    .mobile-nav-link:hover, .mobile-nav-link:active { color: rgba(255,255,255,0.5); }
+    .mobile-menu-close {
+      position: absolute;
+      top: 36px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.2s, border-color 0.2s;
+    }
+    #mobile-menu.open .mobile-menu-close {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+      transition-delay: 0.22s;
+    }
+    .mobile-menu-close:hover { color: white; border-color: rgba(255,255,255,0.25); }
+
+    @media (max-width: 768px) {
+      #logo-bar { height: 64px; }
+      #logo-bar img { height: 46px; }
+      nav { height: 52px; padding: 0 20px; justify-content: center; }
+      .nav-links { display: none !important; }
+      .nav-hamburger { display: flex; }
+      footer { padding: 48px 20px 32px; }
+      .footer-bottom { grid-template-columns: 1fr; }
+      .footer-nav { justify-content: flex-start; margin-top: 16px; }
+    }
+
+    @media (max-width: 768px) {
+      .project-info-section { padding: 48px 20px 52px; }
+      .info-grid { grid-template-columns: 1fr; gap: 40px; }
+      .img-full { padding: 28px 20px 0; }
+      .img-pair { grid-template-columns: 1fr; gap: 10px; padding: 10px 20px 0; }
+      .img-offset { grid-template-columns: 1fr; padding: 28px 20px 0; }
+      .img-offset img { grid-column: 1; }
+      .caption { padding: 10px 20px 0; }
+      .caption-pair { padding: 10px 20px 0; grid-template-columns: 1fr; }
+      .pull-quote { padding: 56px 20px; }
+      .pull-quote blockquote { font-size: clamp(18px, 5vw, 24px); }
+      .next-project-bar { padding: 28px 20px; }
+      .view-all-projects-btn, .view-all-btn { min-height: 44px; padding: 14px 20px; }
+      .project-title-large { font-size: clamp(38px, 10vw, 64px); }
+      .project-desc { font-size: 15px; }
+    }
+
+  </style>
+<script>
+  (function(){
+    var btn=document.getElementById("scroll-top");
+    window.addEventListener("scroll",function(){
+      if(window.scrollY>400)btn.classList.add("visible");
+      else btn.classList.remove("visible");
+    },{passive:true});
+    btn.addEventListener("click",function(){
+      window.scrollTo({top:0,behavior:"smooth"});
+    });
+  })();
+</script>
+<script>
+  (function() {
+    var hamburger = document.getElementById('nav-hamburger');
+    var mobileMenu = document.getElementById('mobile-menu');
+    if (!hamburger || !mobileMenu) return;
+    function toggleMenu(open) {
+      hamburger.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', String(open));
+      mobileMenu.classList.toggle('open', open);
+      mobileMenu.setAttribute('aria-hidden', String(!open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+    hamburger.addEventListener('click', function() {
+      toggleMenu(!hamburger.classList.contains('open'));
+    });
+    mobileMenu.querySelectorAll('.mobile-nav-link').forEach(function(link) {
+      link.addEventListener('click', function() { toggleMenu(false); });
+    });
+    var closeBtn = document.getElementById('mobile-menu-close');
+    if (closeBtn) closeBtn.addEventListener('click', function() { toggleMenu(false); });
+  })();
+</script>
+</body>
+</html>
