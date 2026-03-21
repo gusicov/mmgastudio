@@ -1,0 +1,15 @@
+{
+  "rewrites": [
+    { "source": "/projects", "destination": "/projects.html" },
+    { "source": "/industrial", "destination": "/industrial.html" },
+    { "source": "/interiordesign", "destination": "/interiordesign.html" },
+    { "source": "/privatehouse1", "destination": "/privatehouse1.html" },
+    { "source": "/privatehouse2", "destination": "/privatehouse2.html" },
+    { "source": "/privatehouse3", "destination": "/privatehouse3.html" },
+    { "source": "/privatehouse4", "destination": "/privatehouse4.html" },
+    { "source": "/privatehouse5", "destination": "/privatehouse5.html" },
+    { "source": "/residentialcomplex1", "destination": "/residentialcomplex1.html" },
+    { "source": "/residentialcomplex2", "destination": "/residentialcomplex2.html" },
+    { "source": "/residentialcomplex3", "destination": "/residentialcomplex3.html" }
+  ]
+}
