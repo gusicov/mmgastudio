@@ -1732,17 +1732,34 @@
     document.getElementById('site-header').classList.add('revealed');
   }, 500);
 
-  // Hero slideshow with cinematic zoom reset on each slide
+  // Hero slideshow — glitch-free cinematic zoom
   const slides = document.querySelectorAll('.hero-slide');
   let current = 0;
   function goToSlide(next) {
-    slides[current].classList.remove('active');
-    // Reset zoom animation so it restarts on each new slide
-    slides[next].style.animation = 'none';
-    slides[next].offsetHeight; // force reflow
-    slides[next].style.animation = '';
+    const outgoing = slides[current];
+    const incoming = slides[next];
+
+    // Freeze outgoing slide at its current zoom level so removing the
+    // animation doesn't cause an instant scale snap during fade-out
+    const frozenTransform = getComputedStyle(outgoing).transform;
+    outgoing.style.transform = frozenTransform;
+    outgoing.style.animation = 'none';
+    outgoing.classList.remove('active');
+    // Clean up after opacity transition completes (2s)
+    setTimeout(() => {
+      outgoing.style.transform = '';
+      outgoing.style.animation = '';
+    }, 2200);
+
+    // Reset incoming slide so the zoom animation always starts from scale(1)
+    incoming.style.animation = 'none';
+    incoming.style.transform = 'scale(1)';
+    incoming.offsetHeight; // force reflow before re-enabling
+    incoming.style.animation = '';
+    incoming.style.transform = '';
+
     current = next;
-    slides[current].classList.add('active');
+    incoming.classList.add('active');
   }
   setInterval(() => {
     goToSlide((current + 1) % slides.length);
