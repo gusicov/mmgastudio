@@ -225,8 +225,10 @@
       display: flex;
       width: max-content;
       animation: marquee 28s linear infinite;
+      animation-play-state: paused;
     }
-    .marquee-track:hover { animation-play-state: paused; }
+    .marquee-track.ready { animation-play-state: running; }
+    .marquee-track:hover { animation-play-state: paused !important; }
 
     .marquee-item {
       display: flex;
@@ -241,12 +243,17 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: rgba(10,10,10,0.35);
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+      padding-left: 0.15em; /* compensate trailing letter-spacing */
     }
     .marquee-dot {
       width: 4px; height: 4px;
       border-radius: 50%;
       background: rgba(10,10,10,0.2);
       flex-shrink: 0;
+      align-self: center;
     }
 
     @keyframes marquee {
@@ -1791,6 +1798,13 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   })();
+</script>
+<script>
+  // Start marquee only after all fonts are rendered — prevents progressive text appearance
+  document.fonts.ready.then(function() {
+    var track = document.querySelector('.marquee-track');
+    if (track) track.classList.add('ready');
+  });
 </script>
 </body>
 </html>
