@@ -1612,26 +1612,29 @@
     </div>
 
     <div class="reveal">
-      <form onsubmit="return false;">
+      <form id="contact-form" action="https://formspree.io/f/xwvrjjoz" method="POST">
         <div class="form-row">
           <div class="form-group">
-            <input class="form-input" type="text" placeholder="First name" />
+            <input class="form-input" type="text" name="first_name" placeholder="First name" required />
           </div>
           <div class="form-group">
-            <input class="form-input" type="text" placeholder="Last name" />
+            <input class="form-input" type="text" name="last_name" placeholder="Last name" required />
           </div>
         </div>
         <div class="form-group">
-          <input class="form-input" type="email" placeholder="Email address" />
+          <input class="form-input" type="email" name="email" placeholder="Email address" required />
         </div>
         <div class="form-group">
-          <input class="form-input" type="text" placeholder="Project type (e.g. Residential exterior)" />
+          <input class="form-input" type="text" name="project_type" placeholder="Project type (e.g. Residential exterior)" />
         </div>
         <div class="form-group">
-          <textarea class="form-input" placeholder="Tell us about your project..."></textarea>
+          <textarea class="form-input" name="message" placeholder="Tell us about your project..."></textarea>
         </div>
         <button class="form-submit" type="submit">Send Message</button>
       </form>
+      <div id="form-success" style="display:none; margin-top:24px; padding:20px 24px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.85); font-size:14px; letter-spacing:0.04em; line-height:1.6;">
+        Thank you — we'll get back to you within 24 hours.
+      </div>
     </div>
   </div>
 </section>
@@ -1669,6 +1672,37 @@
 
 <!-- ────────────────── SCRIPTS ────────────────── -->
 <script>
+  // Contact form — Formspree AJAX submit
+  const contactForm = document.getElementById('contact-form');
+  const formSuccess = document.getElementById('form-success');
+  if (contactForm) {
+    contactForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = contactForm.querySelector('.form-submit');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      try {
+        const res = await fetch(contactForm.action, {
+          method: 'POST',
+          body: new FormData(contactForm),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          contactForm.style.display = 'none';
+          formSuccess.style.display = 'block';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Send Message';
+          alert('Something went wrong. Please try again.');
+        }
+      } catch {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  }
+
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
