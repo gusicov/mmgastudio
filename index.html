@@ -59,21 +59,28 @@
     #logo-bar {
       background: white;
       height: 110px;
+      max-height: 110px;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       border-bottom: 1px solid rgba(10,10,10,0.07);
+      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
     #logo-bar img {
       height: 82px;
       width: auto;
     }
+    #site-header.scrolled #logo-bar {
+      max-height: 0;
+      border-bottom-color: transparent;
+    }
 
     /* ── Nav ── */
     nav {
-      position: relative;
-      top: auto;
-      left: auto; right: auto;
+      position: sticky;
+      top: 0;
+      left: 0; right: 0;
       z-index: 200;
       background: var(--black);
       height: 72px;
@@ -1471,7 +1478,7 @@
     </div>
     <div class="stat-block reveal">
       <div class="stat-big-num">5★</div>
-      <div class="stat-big-label">Average client rating across delivered projects</div>
+      <div class="stat-big-label">Client rating across delivered projects</div>
     </div>
   </div>
 </section>
@@ -1482,7 +1489,7 @@
   <div class="team-inner">
     <div class="team-left reveal">
       <div class="section-label">The people</div>
-      <h2>Our studio, <em>your vision</em></h2>
+      <h2><em>Your vision</em> by our studio</h2>
       <p class="team-desc">MMGA Studio is built on a foundation of architectural expertise and a passion for photorealistic craft. We bring together design sensibility and technical precision to deliver renders that go beyond imagery — they communicate space, atmosphere, and intent.</p>
     </div>
 
@@ -1841,7 +1848,10 @@
 <script>
   (function() {
     var btn = document.getElementById('scroll-top');
+    var siteHeader = document.getElementById('site-header');
     window.addEventListener('scroll', function() {
+      if (window.scrollY > 10) siteHeader.classList.add('scrolled');
+      else siteHeader.classList.remove('scrolled');
       if (window.scrollY > 400) btn.classList.add('visible');
       else btn.classList.remove('visible');
     }, { passive: true });
