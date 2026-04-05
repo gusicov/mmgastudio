@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     :root {
@@ -39,96 +39,144 @@
       line-height: 0.92;
     }
 
-    /* ── Site Header (fixed, intro reveal) ── */
+    /* ── Site Header ── */
     #site-header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 400;
+      display: flex;
+      justify-content: center;
       transform: translateY(-12px);
       opacity: 0;
-      transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+      transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 1s cubic-bezier(0.22, 1, 0.36, 1);
     }
     #site-header.revealed {
       transform: translateY(0);
       opacity: 1;
+      pointer-events: auto;
     }
 
-    /* ── Logo bar ── */
-    #logo-bar {
-      background: white;
-      height: 110px;
-      max-height: 110px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 1px solid rgba(10,10,10,0.07);
-      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    #logo-bar img {
-      height: 82px;
-      width: auto;
-    }
-    #site-header.scrolled #logo-bar {
-      max-height: 0;
-      border-bottom-color: transparent;
-    }
-
-    /* ── Nav ── */
-    nav {
-      position: sticky;
-      top: 0;
-      left: 0; right: 0;
-      z-index: 200;
-      background: var(--black);
+    /* ── Header bar ── */
+    #header-bar {
+      width: 100%;
+      max-width: 3840px;
       height: 72px;
+      position: relative;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       padding: 0 48px;
+      background: var(--black);
       border-bottom: 1px solid var(--white-border);
+      transition:
+        max-width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        margin-top 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        border-radius 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.4s ease,
+        box-shadow 0.4s ease,
+        border-color 0.4s ease,
+        padding 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #site-header.scrolled #header-bar {
+      max-width: 980px;
+      margin-top: 12px;
+      height: 60px;
+      border-radius: 14px;
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      padding: 0 28px;
     }
 
-    .nav-links {
+    /* ── Header logo ── */
+    .header-logo {
       display: flex;
-      gap: 44px;
       align-items: center;
+      text-decoration: none;
+      flex-shrink: 0;
     }
+    .header-logo img {
+      height: 50px;
+      width: auto;
+      filter: invert(1);
+      opacity: 0.9;
+      transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s;
+    }
+    #site-header.scrolled .header-logo img { height: 38px; }
+    .header-logo:hover img { opacity: 0.82; }
 
-    .nav-link {
-      font-size: 15px;
+    /* ── Header nav links (desktop) ── */
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .header-nav-link {
+      font-size: 14px;
       font-weight: 400;
       letter-spacing: 0.01em;
-      color: rgba(255,255,255,0.55);
+      color: rgba(255, 255, 255, 0.55);
       text-decoration: none;
-      transition: color 0.2s;
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+      white-space: nowrap;
     }
-    .nav-link:hover { color: #fff; }
+    .header-nav-link:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .header-nav-link:focus-visible { outline: 2px solid rgba(255,255,255,0.35); outline-offset: 2px; }
 
-    .nav-cta {
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 100px;
-      padding: 10px 26px;
-      font-size: 15px;
-      font-weight: 500;
-      background: transparent;
-      color: white;
-      cursor: pointer;
+    /* ── Header right group ── */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* ── Header social icons ── */
+    .header-socials {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+    .header-social-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: background 0.2s ease, border-color 0.2s ease;
       text-decoration: none;
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-      letter-spacing: 0.01em;
-      display: inline-block;
     }
-    .nav-cta:hover {
-      background: white;
-      color: var(--black);
-      border-color: white;
+    .header-social-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.22); }
+    .header-social-btn:focus-visible { outline: 2px solid rgba(255,255,255,0.35); outline-offset: 2px; }
+    .header-social-btn img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      filter: invert(1);
+      opacity: 0.7;
     }
-    .nav-cta:active { transform: scale(0.98); }
 
-    /* ── Hero Slideshow ── */
+
+    /* ── Hero Shader ── */
     #hero {
       position: relative;
       height: 100vh;
@@ -137,42 +185,29 @@
       background: var(--black);
     }
 
-    .hero-slides {
+    #hero-canvas {
       position: absolute;
       inset: 0;
-      z-index: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
     }
-    @keyframes heroZoom {
-      from { transform: scale(1); }
-      to   { transform: scale(1.06); }
-    }
-    .hero-slide {
+
+    #hero .hero-overlay {
       position: absolute;
       inset: 0;
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: opacity, transform;
-    }
-    .hero-slide.active {
-      opacity: 1;
-      animation: heroZoom 7s ease-out forwards;
-    }
-    .hero-slide::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(10,10,10,0.45);
+      background: rgba(10, 10, 10, 0.28);
+      z-index: 1;
     }
 
     /* Grain texture */
     #hero .grain {
       position: absolute;
       inset: 0;
-      z-index: 1;
+      z-index: 2;
       pointer-events: none;
-      opacity: 0.3;
+      opacity: 0.25;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
       mix-blend-mode: soft-light;
     }
@@ -180,44 +215,142 @@
     #hero .hero-content {
       position: absolute;
       inset: 0;
-      z-index: 2;
+      z-index: 3;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 0 48px;
+      padding: 0 32px;
     }
 
-    .hero-descriptor p {
-      font-size: clamp(15px, 1.6vw, 19px);
-      color: rgba(255,255,255,0.82);
+    /* Staggered reveal animations */
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes heroFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .hero-label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: heroFadeIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+    }
+
+    .hero-headline {
+      margin: 0 0 28px;
+    }
+    .hero-headline-line {
+      display: block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 10vw, 148px);
+      letter-spacing: -0.01em;
+      line-height: 0.92;
+      color: #ffffff;
+      opacity: 0;
+    }
+    .hero-headline-line:nth-child(1) {
+      animation: heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.45s forwards;
+    }
+    .hero-headline-line:nth-child(2) {
+      animation: heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.6s forwards;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(14px, 1.4vw, 17px);
+      color: rgba(255,255,255,0.52);
       line-height: 1.7;
       font-weight: 300;
       letter-spacing: 0.01em;
-      max-width: 520px;
+      max-width: 460px;
+      margin: 0 0 44px;
+      opacity: 0;
+      animation: heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
     }
-    .hero-descriptor .scroll-hint {
-      margin-top: 40px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.3);
-      letter-spacing: 0.18em;
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.9s forwards;
+    }
+
+    .hero-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      background: #ffffff;
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.22s ease, color 0.22s ease, transform 0.22s cubic-bezier(0.22,1,0.36,1);
+    }
+    .hero-btn-primary:hover { background: rgba(255,255,255,0.88); transform: translateY(-1px); }
+    .hero-btn-primary:active { transform: translateY(0); }
+    .hero-btn-primary:focus-visible { outline: 2px solid rgba(255,255,255,0.6); outline-offset: 3px; }
+
+    .hero-btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: transparent;
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.18);
+      transition: color 0.22s ease, border-color 0.22s ease, transform 0.22s cubic-bezier(0.22,1,0.36,1);
+    }
+    .hero-btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.4); transform: translateY(-1px); }
+    .hero-btn-ghost:active { transform: translateY(0); }
+    .hero-btn-ghost:focus-visible { outline: 2px solid rgba(255,255,255,0.35); outline-offset: 3px; }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 10px;
+      opacity: 0;
+      animation: heroFadeIn 1s cubic-bezier(0.22,1,0.36,1) 1.3s forwards;
     }
-    .scroll-hint .line {
-      width: 28px;
+    .hero-scroll-hint .line {
+      width: 24px;
       height: 1px;
-      background: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.2);
     }
 
 
     /* Offset for fixed header on anchor nav */
     #projects, #services, #team, #contact {
-      scroll-margin-top: 182px;
+      scroll-margin-top: 88px;
     }
 
     /* ── Marquee strip ── */
@@ -233,6 +366,7 @@
       width: max-content;
       animation: marquee 28s linear infinite;
       animation-play-state: paused;
+      will-change: transform;
     }
     .marquee-track.ready { animation-play-state: running; }
     .marquee-track:hover { animation-play-state: paused !important; }
@@ -327,6 +461,7 @@
       background: #1a1a1a;
       cursor: pointer;
       height: 100%;
+      contain: layout style paint;
     }
     .project-card.tall {
       grid-row: span 2;
@@ -982,6 +1117,12 @@
       .footer-nav { justify-content: flex-start; margin-top: 16px; }
     }
 
+    /* ── Performance: skip off-screen paint for deep sections ── */
+    #faq, #contact {
+      content-visibility: auto;
+      contain-intrinsic-size: 0 800px;
+    }
+
     /* ── Scroll Reveal ── */
     .reveal {
       opacity: 0;
@@ -1003,49 +1144,13 @@
     .hero-anim-2 { animation: fadeUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both; }
     .hero-anim-3 { animation: fadeUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s both; }
 
-    /* ── Mobile hamburger nav ── */
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      width: 44px;
-      height: 44px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      position: relative;
-      z-index: 10;
-    }
-    .nav-hamburger span {
-      display: block;
-      width: 22px;
-      height: 1.5px;
-      background: rgba(255,255,255,0.8);
-      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s;
-      transform-origin: center;
-    }
-    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-    .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-
-    #mobile-menu {
-      position: fixed;
-      inset: 0;
-      z-index: 410;
-      background: var(--black);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s cubic-bezier(0.22,1,0.36,1);
-    }
+    /* ── Mobile menu overlay ── */
+    #mobile-menu { position: fixed; inset: 0; z-index: 500; background: rgba(10,10,10,0.98); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.22,1,0.36,1); }
     #mobile-menu.open { opacity: 1; pointer-events: auto; }
-    .mobile-menu-inner {
+    .mobile-close-btn { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.7); -webkit-tap-highlight-color: transparent; transition: background 0.2s, border-color 0.2s; padding: 0; }
+    .mobile-close-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
+    .mobile-close-btn svg { width: 18px; height: 18px; }
+    .mobile-nav-links {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1053,46 +1158,17 @@
     }
     .mobile-nav-link {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(48px, 14vw, 72px);
+      font-size: 52px;
       letter-spacing: 0.02em;
-      color: rgba(255,255,255,0.9);
+      color: rgba(255, 255, 255, 0.75);
       text-decoration: none;
-      line-height: 1.2;
-      padding: 4px 0;
-      opacity: 0;
-      transform: translateY(18px);
-      transition: color 0.2s, opacity 0.45s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
+      text-align: center;
+      padding: 4px 32px;
+      line-height: 1.1;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s;
     }
-    #mobile-menu.open .mobile-nav-link { opacity: 1; transform: translateY(0); }
-    #mobile-menu.open .mobile-nav-link:nth-child(1) { transition-delay: 0.05s; }
-    #mobile-menu.open .mobile-nav-link:nth-child(2) { transition-delay: 0.10s; }
-    #mobile-menu.open .mobile-nav-link:nth-child(3) { transition-delay: 0.15s; }
-    #mobile-menu.open .mobile-nav-link:nth-child(4) { transition-delay: 0.20s; }
-    .mobile-nav-link:hover, .mobile-nav-link:active { color: rgba(255,255,255,0.5); }
-    .mobile-menu-close {
-      position: absolute;
-      top: 36px;
-      left: 50%;
-      transform: translateX(-50%) scale(0.8);
-      background: none;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgba(255,255,255,0.45);
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.3s, transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.2s, border-color 0.2s;
-    }
-    #mobile-menu.open .mobile-menu-close {
-      opacity: 1;
-      transform: translateX(-50%) scale(1);
-      transition-delay: 0.22s;
-    }
-    .mobile-menu-close:hover { color: white; border-color: rgba(255,255,255,0.25); }
+    .mobile-nav-link:hover, .mobile-nav-link:active { color: #fff; }
 
     /* ── Responsive ── */
     @media (max-width: 900px) {
@@ -1103,13 +1179,23 @@
 
     @media (max-width: 768px) {
       /* ── Header ── */
-      #logo-bar { height: 64px; }
-      #logo-bar img { height: 46px; }
-      nav { height: 52px; padding: 0 20px; justify-content: center; }
-      .nav-links { display: none; }
-      .nav-cta { display: none; }
-      .nav-hamburger { display: flex; }
-      #projects, #services, #team, #contact { scroll-margin-top: 116px; }
+      #header-bar { height: 60px; padding: 0 20px; }
+      #site-header.scrolled #header-bar {
+        max-width: 100%;
+        margin-top: 0;
+        border-radius: 0;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        padding: 0 20px;
+        box-shadow: none;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        border-left: none; border-right: none; border-top: none;
+      }
+      .header-nav { display: none; }
+      .header-right { display: none; }
+      #header-bar { justify-content: center; }
+      .header-logo { cursor: pointer; }
+      #projects, #services, #team, #contact { scroll-margin-top: 72px; }
 
       /* ── Hero ── */
       #hero { min-height: 100svh; }
@@ -1188,65 +1274,315 @@
 </head>
 <body>
 
+<!-- ────────────────────────────────────────────────────────────────────────
+     PAGE LOADER — renders before anything else, covers full viewport
+     Background (#fff) must match the --mask-bg variable below.
+──────────────────────────────────────────────────────────────────────────── -->
+<div id="page-loader" style="position:fixed;inset:0;z-index:9999;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:40px;transition:opacity 0.85s cubic-bezier(0.4,0,0.2,1),transform 0.85s cubic-bezier(0.4,0,0.2,1);">
+
+  <style>
+    /* ── 3D Box Loader ── */
+    :root { --mask-bg: #fff; }
+    .mmga-loader {
+      --duration: 3s;
+      --primary: rgba(0,0,0,1);
+      --primary-light: #333;
+      --primary-rgba: rgba(0,0,0,0);
+      width: 200px;
+      height: 320px;
+      position: relative;
+      transform-style: preserve-3d;
+    }
+    @media (max-width: 480px) { .mmga-loader { zoom: 0.5; } }
+    .mmga-loader::before, .mmga-loader::after {
+      --r: 20.5deg;
+      content: "";
+      width: 320px;
+      height: 140px;
+      position: absolute;
+      right: 32%;
+      bottom: -11px;
+      background: var(--mask-bg);
+      transform: translateZ(200px) rotate(var(--r));
+      animation: mmga-mask var(--duration) linear forwards infinite;
+    }
+    .mmga-loader::after { --r: -20.5deg; right: auto; left: 32%; }
+    .mmga-loader .ground {
+      position: absolute;
+      left: -50px;
+      bottom: -120px;
+      transform-style: preserve-3d;
+      transform: rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1);
+    }
+    .mmga-loader .ground div {
+      transform: rotateX(90deg) rotateY(0deg) translate(-48px,-120px) translateZ(100px) scale(0);
+      width: 200px; height: 200px;
+      background: var(--primary);
+      background: linear-gradient(45deg,var(--primary) 0%,var(--primary) 50%,var(--primary-light) 50%,var(--primary-light) 100%);
+      transform-style: preserve-3d;
+      animation: mmga-ground var(--duration) linear forwards infinite;
+    }
+    .mmga-loader .ground div::before, .mmga-loader .ground div::after {
+      --rx: 90deg; --ry: 0deg; --x: 44px; --y: 162px; --z: -50px;
+      content: ""; width: 156px; height: 300px; opacity: 0;
+      background: linear-gradient(var(--primary), var(--primary-rgba));
+      position: absolute;
+      transform: rotateX(var(--rx)) rotateY(var(--ry)) translate(var(--x),var(--y)) translateZ(var(--z));
+      animation: mmga-ground-shine var(--duration) linear forwards infinite;
+    }
+    .mmga-loader .ground div::after { --rx:90deg;--ry:90deg;--x:0;--y:177px;--z:150px; }
+    .mmga-loader .box {
+      --x: 0; --y: 0;
+      position: absolute;
+      animation: var(--duration) linear forwards infinite;
+      transform: translate(var(--x),var(--y));
+    }
+    .mmga-loader .box div {
+      background-color: var(--primary);
+      width: 48px; height: 48px;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: var(--duration) ease forwards infinite;
+      transform: rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0);
+    }
+    .mmga-loader .box div::before, .mmga-loader .box div::after {
+      --rx:90deg;--ry:0deg;--z:24px;--y:-24px;--x:0;
+      content:""; position:absolute; background-color:inherit;
+      width:inherit; height:inherit;
+      transform:rotateX(var(--rx)) rotateY(var(--ry)) translate(var(--x),var(--y)) translateZ(var(--z));
+      filter:brightness(var(--b,1.2));
+    }
+    .mmga-loader .box div::after { --rx:0deg;--ry:90deg;--x:24px;--y:0;--b:1.4; }
+
+    .mmga-loader .box.b0{--x:-220px;--y:-120px;left:58px;top:108px;animation-name:mmga-m0}
+    .mmga-loader .box.b0 div{animation-name:mmga-s0}
+    .mmga-loader .box.b1{--x:-260px;--y:120px;left:25px;top:120px;animation-name:mmga-m1}
+    .mmga-loader .box.b1 div{animation-name:mmga-s1}
+    .mmga-loader .box.b2{--x:120px;--y:-190px;left:58px;top:64px;animation-name:mmga-m2}
+    .mmga-loader .box.b2 div{animation-name:mmga-s2}
+    .mmga-loader .box.b3{--x:280px;--y:-40px;left:91px;top:120px;animation-name:mmga-m3}
+    .mmga-loader .box.b3 div{animation-name:mmga-s3}
+    .mmga-loader .box.b4{--x:60px;--y:200px;left:58px;top:132px;animation-name:mmga-m4}
+    .mmga-loader .box.b4 div{animation-name:mmga-s4}
+    .mmga-loader .box.b5{--x:-220px;--y:-120px;left:25px;top:76px;animation-name:mmga-m5}
+    .mmga-loader .box.b5 div{animation-name:mmga-s5}
+    .mmga-loader .box.b6{--x:-260px;--y:120px;left:91px;top:76px;animation-name:mmga-m6}
+    .mmga-loader .box.b6 div{animation-name:mmga-s6}
+    .mmga-loader .box.b7{--x:-240px;--y:200px;left:58px;top:87px;animation-name:mmga-m7}
+    .mmga-loader .box.b7 div{animation-name:mmga-s7}
+
+    @keyframes mmga-m0{12%{transform:translate(var(--x),var(--y))}25%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes mmga-s0{6%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}14%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes mmga-m1{16%{transform:translate(var(--x),var(--y))}29%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes mmga-s1{10%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}18%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes mmga-m2{20%{transform:translate(var(--x),var(--y))}33%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes mmga-s2{14%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}22%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes mmga-m3{24%{transform:translate(var(--x),var(--y))}37%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes mmga-s3{18%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}26%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes mmga-m4{28%{transform:translate(var(--x),var(--y))}41%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes mmga-s4{22%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}30%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes mmga-m5{32%{transform:translate(var(--x),var(--y))}45%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes mmga-s5{26%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}34%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes mmga-m6{36%{transform:translate(var(--x),var(--y))}49%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes mmga-s6{30%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}38%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes mmga-m7{40%{transform:translate(var(--x),var(--y))}53%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes mmga-s7{34%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}42%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+
+    @keyframes mmga-ground{0%,65%{transform:rotateX(90deg) rotateY(0deg) translate(-48px,-120px) translateZ(100px) scale(0)}75%,90%{transform:rotateX(90deg) rotateY(0deg) translate(-48px,-120px) translateZ(100px) scale(1)}100%{transform:rotateX(90deg) rotateY(0deg) translate(-48px,-120px) translateZ(100px) scale(0)}}
+    @keyframes mmga-ground-shine{0%,70%{opacity:0}75%,87%{opacity:.2}100%{opacity:0}}
+    @keyframes mmga-mask{0%,65%{opacity:0}66%,100%{opacity:1}}
+  </style>
+
+  <!-- 3D box animation -->
+  <div class="mmga-loader" aria-hidden="true">
+    <div class="box b0"><div></div></div>
+    <div class="box b1"><div></div></div>
+    <div class="box b2"><div></div></div>
+    <div class="box b3"><div></div></div>
+    <div class="box b4"><div></div></div>
+    <div class="box b5"><div></div></div>
+    <div class="box b6"><div></div></div>
+    <div class="box b7"><div></div></div>
+    <div class="ground"><div></div></div>
+  </div>
+
+  <!-- Brand label below animation -->
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.28em;color:rgba(10,10,10,0.25);text-transform:uppercase;opacity:0;animation:mmga-label-in 0.6s 0.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards;">
+    MMGA Studio
+  </div>
+  <style>
+    @keyframes mmga-label-in { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  </style>
+</div>
+
+<!-- ── Smart Loader State Machine ─────────────────────────────────────────
+     Conditions to reveal the site:
+       A) Hero image has finished loading (or timed out at 8s)
+       B) Current 3s animation loop has completed
+     Both must be true. We never cut mid-loop.
+──────────────────────────────────────────────────────────────────────────── -->
+<script>
+(function() {
+  var ANIM_DURATION = 3000; // matches --duration: 3s
+  var MAX_WAIT      = 8000; // hard cap: reveal after 8s regardless
+
+  // ── First-visit check ──────────────────────────────────────────────────
+  var alreadySeen = false;
+  try { alreadySeen = !!localStorage.getItem('mmga-intro-seen'); } catch(e) {}
+
+  if (alreadySeen) {
+    // Skip intro entirely — remove loader and reveal header immediately
+    var loaderEl = document.getElementById('page-loader');
+    if (loaderEl && loaderEl.parentNode) loaderEl.parentNode.removeChild(loaderEl);
+    // Two rAFs ensure site-header is in the DOM before adding class
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        var h = document.getElementById('site-header');
+        if (h) h.classList.add('revealed');
+      });
+    });
+    return;
+  }
+
+  var loadStart = performance.now();
+  var heroReady = false;
+  var revealScheduled = false;
+
+  // Lock body scroll while loader is up
+  document.documentElement.style.overflow = 'hidden';
+
+  // ── Signal A: hero image loaded ────────────────────────────────────────
+  var heroImg = new Image();
+  heroImg.onload  = function() { heroReady = true; scheduleReveal(); };
+  heroImg.onerror = function() { heroReady = true; scheduleReveal(); }; // fail-safe
+  heroImg.src = 'hero%20folder/scene00001.jpg';
+
+  // Hard cap — never hang more than MAX_WAIT ms
+  setTimeout(function() {
+    if (!revealScheduled) { heroReady = true; scheduleReveal(); }
+  }, MAX_WAIT);
+
+  // ── Signal B: wait for animation loop boundary ─────────────────────────
+  function scheduleReveal() {
+    if (revealScheduled) return;
+    if (!heroReady) return;
+    revealScheduled = true;
+
+    var elapsed        = performance.now() - loadStart;
+    var posInLoop      = elapsed % ANIM_DURATION;
+    var msUntilLoopEnd = ANIM_DURATION - posInLoop;
+
+    // Never cut within the last 150ms of a loop — roll to next boundary
+    if (msUntilLoopEnd < 150) msUntilLoopEnd += ANIM_DURATION;
+
+    setTimeout(doReveal, msUntilLoopEnd);
+  }
+
+  // ── Reveal ─────────────────────────────────────────────────────────────
+  function doReveal() {
+    var el = document.getElementById('page-loader');
+    if (!el) return;
+
+    // Mark intro as seen for all future visits
+    try { localStorage.setItem('mmga-intro-seen', '1'); } catch(e) {}
+
+    // Signal hero sequence to start (canvas plays behind loader — already buffered)
+    if (window.__heroSignal) window.__heroSignal();
+
+    // Unlock scroll
+    document.documentElement.style.overflow = '';
+
+    // Phase 1: Fade animation content out, leaving a clean white screen
+    // (no translateY — movement causes ghosting over the hero below)
+    Array.prototype.forEach.call(el.children, function(child) {
+      if (child.tagName !== 'STYLE') {
+        child.style.transition = 'opacity 0.45s ease';
+        child.style.opacity = '0';
+      }
+    });
+
+    // Phase 2: After content is gone, fade the white background away
+    setTimeout(function() {
+      el.style.transition = 'opacity 0.7s cubic-bezier(0.4,0,0.2,1)';
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+
+      // Reveal header as white fades (slight delay so header slides in over site)
+      setTimeout(function() {
+        var header = document.getElementById('site-header');
+        if (header) header.classList.add('revealed');
+      }, 150);
+
+      // Remove loader from DOM after fade completes
+      setTimeout(function() {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 750);
+    }, 500);
+  }
+})();
+</script>
+
 <!-- ────────────────── SITE HEADER (revealed after intro) ────────────────── -->
 <div id="site-header">
-  <div id="logo-bar">
-    <a href="#">
-      <img src="brand_assets/logout 4.png" alt="MMGA Studio" />
+  <div id="header-bar">
+    <!-- Logo -->
+    <a href="/" class="header-logo">
+      <img src="brand_assets/logout 4.png" alt="MMGA Studio" decoding="async" />
     </a>
-  </div>
-  <nav>
-    <div class="nav-links">
-      <a href="#projects" class="nav-link">Projects</a>
-      <a href="#services" class="nav-link">Services</a>
-      <a href="#team" class="nav-link">Studio</a>
-      <a href="#contact" class="nav-link">Contact</a>
+
+    <!-- Desktop nav (absolutely centered) -->
+    <nav class="header-nav" aria-label="Main navigation">
+      <a href="#projects" class="header-nav-link">Projects</a>
+      <a href="#services" class="header-nav-link">Services</a>
+      <a href="#team" class="header-nav-link">Studio</a>
+      <a href="#contact" class="header-nav-link">Contact</a>
+    </nav>
+
+    <!-- Right: socials + hamburger -->
+    <div class="header-right">
+      <ul class="header-socials">
+        <li><a href="https://www.instagram.com/mmgastudio" target="_blank" aria-label="Instagram" class="header-social-btn"><img src="brand_assets/infos/instagram.png" alt="Instagram" /></a></li>
+        <li><a href="https://www.linkedin.com/company/mmgastudio" target="_blank" aria-label="LinkedIn" class="header-social-btn"><img src="brand_assets/infos/linkedin.png" alt="LinkedIn" /></a></li>
+        <li><a href="https://www.behance.net/mmgastudio1" target="_blank" aria-label="Behance" class="header-social-btn"><img src="brand_assets/infos/Behance.jpg" alt="Behance" /></a></li>
+        <li><a href="https://www.tiktok.com/@mmgastudio" target="_blank" aria-label="TikTok" class="header-social-btn"><img src="brand_assets/infos/tiktok.png" alt="TikTok" /></a></li>
+      </ul>
     </div>
-    <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
+  </div>
 </div>
 
 <!-- Mobile menu overlay -->
 <div id="mobile-menu" aria-hidden="true">
-  <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-  </button>
-  <div class="mobile-menu-inner">
+  <button class="mobile-close-btn" id="mobile-close" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <nav class="mobile-nav-links" aria-label="Mobile navigation">
     <a href="#projects" class="mobile-nav-link">Projects</a>
     <a href="#services" class="mobile-nav-link">Services</a>
     <a href="#team" class="mobile-nav-link">Studio</a>
     <a href="#contact" class="mobile-nav-link">Contact</a>
-  </div>
+  </nav>
 </div>
 
 
-<!-- ────────────────── HERO SLIDESHOW ────────────────── -->
+<!-- ────────────────── HERO SHADER ────────────────── -->
 <section id="hero">
-  <div class="hero-slides">
-    <div class="hero-slide active" style="background-image:url('brand_assets/Projects/1/project1_1.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/1/project1_3.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/1/project1_5.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/2/project2_1.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/2/project2_3.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/2/project2_6.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/3/project3_1.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/3/project3_4.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/3/project3_6.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/4/project4_1.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/4/project4_3.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('brand_assets/Projects/4/project4_5.jpg')"></div>
-  </div>
-  <div class="grain"></div>
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
   <div class="hero-content">
-    <div class="hero-descriptor">
-      <p>Architectural visualization, CGI rendering &amp; immersive spatial storytelling for the built world.</p>
-      <div class="scroll-hint">
-        <div class="line"></div>
-        <span>Scroll</span>
-      </div>
+    <p class="hero-label">Architectural Visualization Studio</p>
+    <h1 class="hero-headline">
+      <span class="hero-headline-line">Architecture</span>
+      <span class="hero-headline-line">Visualized</span>
+    </h1>
+    <p class="hero-subtitle">Photorealistic CGI rendering and spatial storytelling that turns architectural vision into images clients believe in.</p>
+    <div class="hero-actions">
+      <a href="#projects" class="hero-btn-primary">View Projects</a>
+      <a href="#contact" class="hero-btn-ghost">Get in Touch</a>
     </div>
+  </div>
+  <div class="hero-scroll-hint" aria-hidden="true">
+    <div class="line"></div>
+    <span>Scroll</span>
+    <div class="line"></div>
   </div>
 </section>
 
@@ -1292,7 +1628,7 @@
   <div class="projects-grid">
     <!-- Card 1 — tall -->
     <a href="/residentialcomplex1" class="project-card tall reveal" style="text-decoration:none;display:block;">
-      <img src="brand_assets/Projects/1/project1_1.jpg" alt="Residential Complex" style="min-height:100%;height:100%;" />
+      <img src="brand_assets/Projects/1/project1_1.jpg" alt="Residential Complex" style="min-height:100%;height:100%;" decoding="async" />
       <div class="project-overlay">
         <div class="project-info">
           <div class="project-num">01</div>
@@ -1308,7 +1644,7 @@
 
     <!-- Card 2 -->
     <a href="/residentialcomplex2" class="project-card reveal" style="text-decoration:none;display:block;">
-      <img src="brand_assets/Projects/2/project2_1.jpg" alt="Residential Complex" />
+      <img src="brand_assets/Projects/2/project2_1.jpg" alt="Residential Complex" loading="lazy" decoding="async" />
       <div class="project-overlay">
         <div class="project-info">
           <div class="project-num">02</div>
@@ -1324,7 +1660,7 @@
 
     <!-- Card 3 -->
     <a href="/residentialcomplex3" class="project-card reveal" style="text-decoration:none;display:block;">
-      <img src="brand_assets/Projects/3/project3_1.jpg" alt="Residential Complex" />
+      <img src="brand_assets/Projects/3/project3_1.jpg" alt="Residential Complex" loading="lazy" decoding="async" />
       <div class="project-overlay">
         <div class="project-info">
           <div class="project-num">03</div>
@@ -1340,7 +1676,7 @@
 
     <!-- Card 4 -->
     <a href="/industrial" class="project-card reveal" style="text-decoration:none;display:block;">
-      <img src="brand_assets/Projects/4/project4_1.jpg" alt="Industrial Hall" />
+      <img src="brand_assets/Projects/4/project4_1.jpg" alt="Industrial Hall" loading="lazy" decoding="async" />
       <div class="project-overlay">
         <div class="project-info">
           <div class="project-num">04</div>
@@ -1356,7 +1692,7 @@
 
     <!-- Card 5 -->
     <a href="/interiordesign" class="project-card reveal" style="text-decoration:none;display:block;">
-      <img src="brand_assets/Projects/5/project5_1.jpg" alt="Interior Design" />
+      <img src="brand_assets/Projects/5/project5_1.jpg" alt="Interior Design" loading="lazy" decoding="async" />
       <div class="project-overlay">
         <div class="project-info">
           <div class="project-num">05</div>
@@ -1445,7 +1781,7 @@
 
 <!-- ────────────────── SHOWCASE / FULL-WIDTH IMAGE ────────────────── -->
 <section id="showcase">
-  <img src="https://placehold.co/1920x600/0e0c0a/0e0c0a" alt="Architecture showcase" />
+  <img src="https://placehold.co/1920x600/0e0c0a/0e0c0a" alt="Architecture showcase" loading="lazy" decoding="async" />
   <div class="showcase-overlay">
     <div class="showcase-text reveal">
       <div class="section-label-white">Our approach</div>
@@ -1496,7 +1832,7 @@
     <div class="team-right">
       <div class="reveal">
         <div class="team-card">
-          <img src="brand_assets/Team/Mihai Marinescu.jpg" alt="Mihai Marinescu" />
+          <img src="brand_assets/Team/Mihai Marinescu.jpg" alt="Mihai Marinescu" loading="lazy" decoding="async" />
         </div>
         <div class="team-info">
           <div class="team-name">Mihai Marinescu</div>
@@ -1506,7 +1842,7 @@
       </div>
       <div class="reveal">
         <div class="team-card">
-          <img src="brand_assets/Team/Gusicov Andreas.jpg" alt="Gusicov Andreas" />
+          <img src="brand_assets/Team/Gusicov Andreas.jpg" alt="Gusicov Andreas" loading="lazy" decoding="async" />
         </div>
         <div class="team-info">
           <div class="team-name">Gusicov Andreas</div>
@@ -1751,60 +2087,232 @@
     });
   });
 
-  // Mobile hamburger menu
-  const hamburger = document.getElementById('nav-hamburger');
+  // Mobile menu — logo tap opens, X closes
   const mobileMenu = document.getElementById('mobile-menu');
+  const mobileClose = document.getElementById('mobile-close');
+  const logoLink = document.querySelector('.header-logo');
   function toggleMenu(open) {
-    hamburger.classList.toggle('open', open);
-    hamburger.setAttribute('aria-expanded', open);
     mobileMenu.classList.toggle('open', open);
-    mobileMenu.setAttribute('aria-hidden', !open);
+    mobileMenu.setAttribute('aria-hidden', String(!open));
     document.body.style.overflow = open ? 'hidden' : '';
   }
-  hamburger.addEventListener('click', () => toggleMenu(!hamburger.classList.contains('open')));
+  if (logoLink) {
+    logoLink.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768) {
+        e.preventDefault();
+        toggleMenu(!mobileMenu.classList.contains('open'));
+      }
+    });
+  }
+  if (mobileClose) {
+    mobileClose.addEventListener('click', () => toggleMenu(false));
+  }
   mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
     link.addEventListener('click', () => toggleMenu(false));
   });
-  const closeBtn = document.getElementById('mobile-menu-close');
-  if (closeBtn) closeBtn.addEventListener('click', () => toggleMenu(false));
 
-  // Intro reveal: show header after 0.5s — smooth fade + subtle rise
-  setTimeout(() => {
-    document.getElementById('site-header').classList.add('revealed');
-  }, 500);
+  // ── Hero Image Sequence ──────────────────────────────────────────────────
+  (function() {
+    'use strict';
 
-  // Hero slideshow — glitch-free cinematic zoom
-  const slides = document.querySelectorAll('.hero-slide');
-  let current = 0;
-  function goToSlide(next) {
-    const outgoing = slides[current];
-    const incoming = slides[next];
+    var canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    // Freeze outgoing slide at its current zoom level so removing the
-    // animation doesn't cause an instant scale snap during fade-out
-    const frozenTransform = getComputedStyle(outgoing).transform;
-    outgoing.style.transform = frozenTransform;
-    outgoing.style.animation = 'none';
-    outgoing.classList.remove('active');
-    // Clean up after opacity transition completes (2s)
-    setTimeout(() => {
-      outgoing.style.transform = '';
-      outgoing.style.animation = '';
-    }, 2200);
+    // ── Config ──────────────────────────────────────────────────────────────
+    var TOTAL    = 617;
+    var FPS      = 30;
+    var INTERVAL = 1000 / FPS;            // 33.33 ms per frame
+    var BASE     = 'hero%20folder/scene'; // URL-encoded folder name
 
-    // Reset incoming slide so the zoom animation always starts from scale(1)
-    incoming.style.animation = 'none';
-    incoming.style.transform = 'scale(1)';
-    incoming.offsetHeight; // force reflow before re-enabling
-    incoming.style.animation = '';
-    incoming.style.transform = '';
+    // ── State ────────────────────────────────────────────────────────────────
+    var frames      = new Array(TOTAL).fill(null); // Image objects, null = not started
+    var drawn       = -1;      // index of last successfully drawn frame
+    var playing     = false;
+    var rafId       = null;
+    var startTime   = -1;      // performance.now() at playback start (adjusted for pauses)
+    var hiddenAt    = -1;      // timestamp when tab was hidden
+    var playReady   = false;   // true once intro is done (or skipped)
+    var bufferReady = false;   // true once phase-A (first 30 frames) is loaded
+    var inViewport  = true;    // tracks IntersectionObserver state
 
-    current = next;
-    incoming.classList.add('active');
-  }
-  setInterval(() => {
-    goToSlide((current + 1) % slides.length);
-  }, 6000);
+    // On repeat visits the intro is skipped — hero can play immediately
+    try { if (localStorage.getItem('mmga-intro-seen')) playReady = true; } catch(e) {}
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function pad5(n) { var s = '' + n; while (s.length < 5) s = '0' + s; return s; }
+    function frameUrl(n) { return BASE + pad5(n) + '.jpg'; } // n is 1-indexed
+
+    // ── Canvas sizing ─────────────────────────────────────────────────────────
+    // Use CSS pixels (no DPR) — hero BG doesn't need sub-pixel precision,
+    // and avoiding 2× overdraw saves significant GPU time per frame.
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+      redraw();
+    }
+
+    // ── Cover-fit draw ────────────────────────────────────────────────────────
+    function redraw() {
+      if (drawn < 0 || !frames[drawn]) return;
+      var img = frames[drawn];
+      if (!img.complete || !img.naturalWidth) return;
+      coverDraw(img);
+    }
+
+    function coverDraw(img) {
+      var cw = canvas.width, ch = canvas.height;
+      var iw = img.naturalWidth, ih = img.naturalHeight;
+      var scale = Math.max(cw / iw, ch / ih);
+      var dw = iw * scale, dh = ih * scale;
+      ctx.drawImage(img, (cw - dw) * 0.5, (ch - dh) * 0.5, dw, dh);
+    }
+
+    // ── Animation tick ────────────────────────────────────────────────────────
+    // Time-based: always shows whichever frame *should* be playing right now.
+    // If that frame isn't loaded yet, holds the last drawn frame (no stutter).
+    function tick(now) {
+      rafId = requestAnimationFrame(tick);
+      if (!playing) return;
+
+      // Initialise clock on first tick after start
+      if (startTime < 0) startTime = now;
+
+      var target = Math.floor((now - startTime) / INTERVAL) % TOTAL;
+      if (target === drawn) return; // still on the correct frame
+
+      var img = frames[target];
+      if (img && img.complete && img.naturalWidth > 0) {
+        drawn = target;
+        coverDraw(img);
+      }
+      // Frame not ready → silently hold the previous one
+    }
+
+    // ── Playback control ──────────────────────────────────────────────────────
+    function startPlayback() {
+      if (playing) return;
+      resize();
+      window.addEventListener('resize', resize);
+      playing   = true;
+      startTime = -1;
+      // Only schedule RAF if the hero is actually on screen
+      if (inViewport && !rafId) rafId = requestAnimationFrame(tick);
+    }
+
+    function tryStart() {
+      if (playReady && bufferReady) startPlayback();
+    }
+
+    // Called by the intro loader's doReveal() on first visit
+    window.__heroSignal = function() {
+      playReady = true;
+      tryStart();
+    };
+
+    // ── Tab-visibility: keep loop position accurate across hidden periods ─────
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        hiddenAt = performance.now();
+      } else if (hiddenAt > 0 && startTime > 0) {
+        startTime += performance.now() - hiddenAt; // slide window forward
+        hiddenAt = -1;
+      }
+    });
+
+    // ── Pause RAF when hero scrolls out of view (saves CPU/GPU) ──────────────
+    // Uses threshold:0 — any pixel of the hero in view counts as "visible".
+    // Resumes from the correct time-based frame position (no restart from frame 1).
+    var heroEl = document.getElementById('hero');
+    if (heroEl && window.IntersectionObserver) {
+      new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          inViewport = e.isIntersecting;
+          if (inViewport) {
+            // Hero is back on screen — restart RAF if animation is running
+            if (playing && !rafId) rafId = requestAnimationFrame(tick);
+          } else {
+            // Hero has left the viewport — cancel RAF to free CPU/GPU
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+          }
+        });
+      }, { threshold: 0 }).observe(heroEl);
+    }
+
+    // ── Controlled parallel loader ────────────────────────────────────────────
+    // Loads frame indices [from, to) (0-indexed) up to `maxCon` at once.
+    // Calls onDone() once every frame in the range has loaded or errored.
+    function loadRange(from, to, maxCon, onDone) {
+      var head   = from; // next index to dispatch
+      var done   = 0;
+      var total  = to - from;
+      if (total <= 0) { if (onDone) onDone(); return; }
+
+      function dispatch() {
+        while (head < to) {
+          // Count active (dispatched but not finished) jobs
+          var active = (head - from) - done;
+          if (active >= maxCon) break;
+
+          var i = head++;
+          if (frames[i] && frames[i].complete) {
+            // Already fully loaded (e.g. from a prior phase overlap)
+            done++;
+            if (done === total && onDone) { onDone(); onDone = null; }
+            continue;
+          }
+          if (frames[i]) {
+            // Image object exists but not yet complete — piggyback on it
+            (function(idx) {
+              var orig = frames[idx].onload;
+              frames[idx].onload = function() {
+                if (orig) orig.call(this);
+                done++;
+                if (done === total && onDone) { onDone(); onDone = null; }
+                dispatch();
+              };
+            })(i);
+            continue;
+          }
+
+          // Fresh load
+          (function(idx) {
+            var img = new Image();
+            frames[idx] = img;
+            img.onload = img.onerror = function() {
+              done++;
+              if (done === total && onDone) { onDone(); onDone = null; }
+              dispatch();
+            };
+            img.src = frameUrl(idx + 1); // filenames are 1-indexed
+          })(i);
+        }
+      }
+      dispatch();
+    }
+
+    // ── Progressive loading pipeline ──────────────────────────────────────────
+    //
+    //  Phase A  [0 .. 30)   first second   ≈  9 MB  — blocks playback
+    //  Phase B  [30 .. 90)  next 2 seconds ≈ 18 MB  — streams while A plays
+    //  Phase C  [90 .. 617) remaining      ≈165 MB  — background, lower concurrency
+    //
+    //  Phase B fires immediately alongside A so its frames arrive early.
+    //  Phase C fires from A's callback so it doesn't compete during critical boot.
+    //
+    loadRange(0, 30, 6, function() {
+      // First 30 frames ready — unlock playback
+      bufferReady = true;
+      tryStart();
+      // Now stream the long tail in background
+      loadRange(90, TOTAL, 4, null);
+    });
+
+    // Phase B in parallel — no overlap with A's range [0,30)
+    loadRange(30, 90, 6, null);
+
+  })();
 </script>
 <!-- ── Scroll to Top ── -->
 <button id="scroll-top" aria-label="Back to top">

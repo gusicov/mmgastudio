@@ -5,3 +5,6 @@ Captură de ecran*
 nixtio.com*
 cargoarchitecture*
 _tmp_ss.mjs
+# Local screenshots / dev artifacts
+localhost_3000_*.png
+*.local.png
