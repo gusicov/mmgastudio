@@ -21,6 +21,7 @@ const filepath = path.join(dir, filename);
 
 const browser = await puppeteer.launch({
   headless: true,
+  executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   args: ['--no-sandbox', '--disable-setuid-sandbox'],
 });
 const page = await browser.newPage();

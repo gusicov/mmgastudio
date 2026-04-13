@@ -589,8 +589,8 @@
     }
     .studio-stats {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px 56px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px 48px;
       margin-top: 48px;
     }
     .stat-item .stat-num {
@@ -741,7 +741,7 @@
     }
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 0;
     }
     .stat-block {
@@ -1174,8 +1174,9 @@
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .services-grid { grid-template-columns: 1fr 1fr; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .stat-block { border-right: none; padding: 24px 0; border-bottom: 1px solid var(--gray-border); }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-block { border-right: none; padding: 28px 0; border-bottom: 1px solid var(--gray-border); }
+      .stat-block:last-child { border-bottom: none; }
     }
 
     @media (max-width: 768px) {
@@ -1220,7 +1221,7 @@
       #studio { padding: 64px 20px; }
       #studio .inner { grid-template-columns: 1fr; gap: 40px; }
       #studio .right-col p { max-width: 100%; }
-      .studio-stats { grid-template-columns: 1fr 1fr; gap: 28px 20px; margin-top: 36px; }
+      .studio-stats { grid-template-columns: 1fr 1fr 1fr; gap: 24px 16px; margin-top: 36px; }
       .stat-item .stat-num { font-size: 52px; }
 
       /* ── Services ── */
@@ -1237,11 +1238,11 @@
 
       /* ── Stats ── */
       #stats { padding: 56px 20px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .stat-block { padding: 24px 12px; border-right: none; border-bottom: 1px solid var(--gray-border); }
-      .stat-block:nth-child(odd) { border-right: 1px solid var(--gray-border); }
-      .stat-block:last-child, .stat-block:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-block { padding: 28px 0; border-right: none; border-bottom: 1px solid var(--gray-border); }
+      .stat-block:last-child { border-bottom: none; }
       .stat-big-num { font-size: clamp(52px, 12vw, 80px); }
+      .studio-stats { grid-template-columns: 1fr; gap: 20px; }
 
       /* ── Team ── */
       #team { padding: 64px 20px; }
@@ -1729,10 +1730,6 @@
           <div class="stat-label">Years of Experience</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num">AI</div>
-          <div class="stat-label">AI-Integrated Workflow</div>
-        </div>
-        <div class="stat-item">
           <div class="stat-num">97%</div>
           <div class="stat-label">Client Retention</div>
         </div>
@@ -1808,10 +1805,6 @@
     <div class="stat-block reveal">
       <div class="stat-big-num">&lt; 1 Week</div>
       <div class="stat-big-label">Average delivery from brief to final render</div>
-    </div>
-    <div class="stat-block reveal">
-      <div class="stat-big-num">24/7</div>
-      <div class="stat-big-label">Client Availability</div>
     </div>
     <div class="stat-block reveal">
       <div class="stat-big-num">5★</div>
