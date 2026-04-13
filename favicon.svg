@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- House/building outline from logo -->
+  <path d="M16 1.5 L30.5 9.5 L30.5 30.5 L1.5 30.5 L1.5 9.5 Z" stroke="#0a0a0a" stroke-width="2.2" stroke-linejoin="miter"/>
+  <!-- Bold M letterform -->
+  <text x="3.5" y="27" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="900" font-size="19" fill="#0a0a0a" letter-spacing="-1">M</text>
+</svg>
