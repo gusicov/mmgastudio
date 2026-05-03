@@ -197,6 +197,20 @@
       object-fit: cover;
       display: block;
       pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    /* Strip all browser-native video UI */
+    #hero-video::-webkit-media-controls,
+    #hero-video::-webkit-media-controls-enclosure,
+    #hero-video::-webkit-media-controls-panel,
+    #hero-video::-webkit-media-controls-play-button,
+    #hero-video::-webkit-media-controls-start-playback-button,
+    #hero-video::-webkit-media-controls-overlay-play-button {
+      display: none !important;
+      -webkit-appearance: none;
+      appearance: none;
+      opacity: 0 !important;
     }
 
     #hero .hero-overlay {
@@ -1570,7 +1584,16 @@
 
 <!-- ────────────────── HERO SHADER ────────────────── -->
 <section id="hero">
-  <video id="hero-video" autoplay muted loop playsinline aria-hidden="true">
+  <video id="hero-video"
+    autoplay muted loop playsinline
+    preload="auto"
+    disablepictureinpicture
+    disableremoteplayback
+    x5-video-player-type="h5"
+    x5-playsinline
+    webkit-playsinline
+    aria-hidden="true"
+    tabindex="-1">
     <source src="hero%20folder/HERO.mp4" type="video/mp4" />
   </video>
   <div class="hero-overlay" aria-hidden="true"></div>
@@ -2109,15 +2132,34 @@
     link.addEventListener('click', () => toggleMenu(false));
   });
 
-  // ── Hero Video: pause when out of viewport to save CPU/GPU ─────────────
+  // ── Hero Video: force autoplay + pause when out of viewport ─────────────
   (function() {
     var vid = document.getElementById('hero-video');
-    if (!vid || !window.IntersectionObserver) return;
-    new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting) { vid.play(); } else { vid.pause(); }
-      });
-    }, { threshold: 0 }).observe(vid);
+    if (!vid) return;
+
+    function tryPlay() {
+      vid.muted = true; // ensure muted before play (required by some browsers)
+      var p = vid.play();
+      if (p !== undefined && p.catch) p.catch(function() {});
+    }
+
+    // Attempt play immediately and again once enough data is buffered
+    tryPlay();
+    vid.addEventListener('loadeddata', tryPlay);
+    vid.addEventListener('canplay', tryPlay);
+
+    // Pause when scrolled off screen, resume when back — saves CPU/GPU
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) { tryPlay(); } else { vid.pause(); }
+        });
+      }, { threshold: 0 }).observe(vid);
+    }
+
+    // Block any click/touch from reaching the video (belt-and-suspenders)
+    vid.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); });
+    vid.addEventListener('touchstart', function(e) { e.preventDefault(); e.stopPropagation(); }, { passive: false });
   })();
 </script>
 <!-- ── Scroll to Top ── -->
