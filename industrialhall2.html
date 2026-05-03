@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Private House — MMGA Studio</title>
+  <title>Industrial Hall — MMGA Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
@@ -20,7 +20,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body { font-family: 'DM Sans', sans-serif; background: #fff; color: var(--black); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-
 
     /* ── Site Header ── */
     #site-header {
@@ -100,29 +99,7 @@
     .header-social-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.22); }
     .header-social-btn:focus-visible { outline: 2px solid rgba(255,255,255,0.35); outline-offset: 2px; }
     .header-social-btn img { width: 16px; height: 16px; object-fit: contain; filter: invert(1); opacity: 0.7; }
-    .header-hamburger {
-      display: none; align-items: center; justify-content: center;
-      width: 40px; height: 40px;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px; cursor: pointer; padding: 0;
-      color: rgba(255,255,255,0.8); -webkit-tap-highlight-color: transparent;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .header-hamburger:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.22); }
-    .header-hamburger:focus-visible { outline: 2px solid rgba(255,255,255,0.35); outline-offset: 2px; }
-    .toggle-icon {
-      width: 20px; height: 20px; fill: none; stroke: currentColor;
-      stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
-      transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .toggle-icon.open { transform: rotate(-45deg); }
-    .toggle-path-top {
-      stroke-dasharray: 12 63;
-      transition: stroke-dasharray 300ms cubic-bezier(0.22,1,0.36,1),
-                  stroke-dashoffset 300ms cubic-bezier(0.22,1,0.36,1);
-    }
-    .toggle-icon.open .toggle-path-top { stroke-dasharray: 20 300; stroke-dashoffset: -32.42px; }
-        #mobile-menu { position: fixed; inset: 0; z-index: 500; background: rgba(10,10,10,0.98); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.22,1,0.36,1); }
+    #mobile-menu { position: fixed; inset: 0; z-index: 500; background: rgba(10,10,10,0.98); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.22,1,0.36,1); }
     #mobile-menu.open { opacity: 1; pointer-events: auto; }
     .mobile-close-btn { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.7); -webkit-tap-highlight-color: transparent; transition: background 0.2s, border-color 0.2s; padding: 0; }
     .mobile-close-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
@@ -159,7 +136,6 @@
     .next-project-link:hover { opacity: 0.55; }
     .next-project-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-mid); }
     .next-project-name { font-size: 14px; font-weight: 500; letter-spacing: 0.01em; color: var(--black); }
-    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.2); letter-spacing: 0.06em; }
     @media (max-width: 1100px) {
       .project-info-section { padding: 60px 80px; }
       .img-full, .img-offset, .img-pair { padding-left: 80px; padding-right: 80px; }
@@ -176,7 +152,7 @@
       .pull-quote { padding: 56px 32px; }
       .next-project-bar { padding: 32px 32px 40px; }
     }
-  
+
     /* ── Footer ── */
     footer {
       background: var(--black);
@@ -267,7 +243,6 @@
 </head>
 <body>
 
-
 <div id="site-header" class="revealed">
   <div id="header-bar">
     <a href="/" class="header-logo">
@@ -301,15 +276,15 @@
 </div>
 
 <div class="hero-image">
-  <img src="/brand_assets/Projects/10/project10_1.jpg" alt="Private House" />
+  <img src="/brand_assets/Projects/12/projec12_1.jpg" alt="Industrial Hall" />
 </div>
 
 <section class="project-info-section">
   <div class="info-grid">
     <div class="info-left">
-      <div class="project-label">10 — Exterior Rendering</div>
-      <h1 class="project-title-large">Private<br/>House</h1>
-      <p class="project-desc">A single-storey private residence set in an open landscape. The long horizontal form is anchored by a central entrance volume and a deep overhanging roof that mediates between inside and outside.</p>
+      <div class="project-label">12 — Exterior Rendering</div>
+      <h1 class="project-title-large">Industrial<br/>Hall</h1>
+      <p class="project-desc">A large-scale industrial facility resolved with structural clarity and restrained elegance. Generous spans, natural light from above, and a palette of raw materials define a space built for performance and permanence.</p>
     </div>
     <div class="info-right">
       <div style="display:flex;justify-content:flex-end;">
@@ -317,8 +292,8 @@
       </div>
       <div>
         <div class="meta-row"><span class="meta-key">Type</span><span class="meta-val">Exterior Rendering</span></div>
-        <div class="meta-row"><span class="meta-key">Category</span><span class="meta-val">Private Residence</span></div>
-        <div class="meta-row"><span class="meta-key">Year</span><span class="meta-val">2024</span></div>
+        <div class="meta-row"><span class="meta-key">Category</span><span class="meta-val">Industrial</span></div>
+        <div class="meta-row"><span class="meta-key">Year</span><span class="meta-val">2025</span></div>
         <div class="meta-row"><span class="meta-key">Location</span><span class="meta-val">Romania</span></div>
       </div>
     </div>
@@ -328,23 +303,24 @@
 <div class="editorial">
 
   <div class="img-full">
-    <img src="/brand_assets/Projects/10/project10_2.jpg" alt="Private House" />
+    <img src="/brand_assets/Projects/12/projec12_2.png" alt="Industrial Hall" />
   </div>
 
   <div class="pull-quote">
-    <blockquote>In restraint lies elegance.</blockquote>
+    <blockquote>Scale and structure working in harmony — industrial architecture without compromise.</blockquote>
   </div>
 
-  <div class="img-full">
-    <img src="/brand_assets/Projects/10/project10_3.jpg" alt="Private House" />
+  <div class="img-pair">
+    <img src="/brand_assets/Projects/12/projec12_3.jpg" alt="Industrial Hall" />
+    <img src="/brand_assets/Projects/12/projec12_4.jpg" alt="Industrial Hall" />
   </div>
 
 </div>
 
 <div class="next-project-bar">
-  <a href="/kindergarten" class="next-project-link">
+  <a href="/residentialcomplex1" class="next-project-link">
     <span class="next-project-label">Next Project</span>
-    <span class="next-project-name">Kindergarten</span>
+    <span class="next-project-name">Residential Complex</span>
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -356,7 +332,6 @@
   <div class="footer-top">
     <a href="/" class="footer-brand">
       <img src="brand_assets/logout 4.png" alt="MMGA Studio" />
-      
     </a>
     <ul class="footer-socials">
       <li><a href="https://www.instagram.com/mmgastudio" target="_blank" aria-label="Instagram" class="footer-social-btn"><img src="brand_assets/infos/instagram.png" alt="Instagram" /></a></li>
@@ -387,40 +362,36 @@
   #scroll-top:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.3)}
   #scroll-top:active{transform:scale(0.94)}
 
-    @media (max-width: 768px) {
-      .project-info-section { padding: 48px 20px 52px; }
-      .info-grid { grid-template-columns: 1fr; gap: 40px; }
-      .img-full { padding: 28px 20px 0; }
-      .img-pair { grid-template-columns: 1fr; gap: 10px; padding: 10px 20px 0; }
-      .img-offset { grid-template-columns: 1fr; padding: 28px 20px 0; }
-      .img-offset img { grid-column: 1; }
-      .caption { padding: 10px 20px 0; }
-      .caption-pair { padding: 10px 20px 0; grid-template-columns: 1fr; }
-      .pull-quote { padding: 56px 20px; }
-      .pull-quote blockquote { font-size: clamp(18px, 5vw, 24px); }
-      .next-project-bar { padding: 28px 20px; }
-      .view-all-projects-btn, .view-all-btn { min-height: 44px; padding: 14px 20px; }
-      .project-title-large { font-size: clamp(38px, 10vw, 64px); }
-      .project-desc { font-size: 15px; }
-    }
+  @media (max-width: 768px) {
+    .project-info-section { padding: 48px 20px 52px; }
+    .info-grid { grid-template-columns: 1fr; gap: 40px; }
+    .img-full { padding: 28px 20px 0; }
+    .img-pair { grid-template-columns: 1fr; gap: 10px; padding: 10px 20px 0; }
+    .img-offset { grid-template-columns: 1fr; padding: 28px 20px 0; }
+    .img-offset img { grid-column: 1; }
+    .pull-quote { padding: 56px 20px; }
+    .pull-quote blockquote { font-size: clamp(18px, 5vw, 24px); }
+    .next-project-bar { padding: 28px 20px; }
+    .view-all-btn { min-height: 44px; padding: 14px 20px; }
+    .project-title-large { font-size: clamp(38px, 10vw, 64px); }
+    .project-desc { font-size: 15px; }
+  }
 
-
-    @media (max-width: 768px) {
-      /* ── Header mobile ── */
-      #header-bar { height: 60px; padding: 0 20px; }
-      #site-header.scrolled #header-bar {
-        max-width: 100%; margin-top: 0; border-radius: 0;
-        backdrop-filter: none; -webkit-backdrop-filter: none;
-        padding: 0 20px; box-shadow: none;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-        border-left: none; border-right: none; border-top: none;
-      }
-      .header-nav { display: none; }
-      .header-right { display: none; }
-      #header-bar { justify-content: center; }
-      .header-logo { cursor: pointer; }
+  @media (max-width: 768px) {
+    #header-bar { height: 60px; padding: 0 20px; }
+    #site-header.scrolled #header-bar {
+      max-width: 100%; margin-top: 0; border-radius: 0;
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+      padding: 0 20px; box-shadow: none;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-left: none; border-right: none; border-top: none;
     }
-  </style>
+    .header-nav { display: none; }
+    .header-right { display: none; }
+    #header-bar { justify-content: center; }
+    .header-logo { cursor: pointer; }
+  }
+</style>
 <script>
   (function(){
     var btn=document.getElementById("scroll-top");
