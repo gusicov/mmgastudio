@@ -200,17 +200,31 @@
       user-select: none;
       -webkit-user-select: none;
     }
-    /* Strip all browser-native video UI */
+    /* Strip all browser-native video UI (works on Chrome + macOS Safari) */
     #hero-video::-webkit-media-controls,
     #hero-video::-webkit-media-controls-enclosure,
     #hero-video::-webkit-media-controls-panel,
     #hero-video::-webkit-media-controls-play-button,
     #hero-video::-webkit-media-controls-start-playback-button,
-    #hero-video::-webkit-media-controls-overlay-play-button {
+    #hero-video::-webkit-media-controls-overlay-play-button,
+    #hero-video::-webkit-media-controls-timeline,
+    #hero-video::-webkit-media-controls-volume-slider,
+    #hero-video::-webkit-media-controls-fullscreen-button,
+    #hero-video::-webkit-media-controls-picture-in-picture-button {
       display: none !important;
       -webkit-appearance: none;
       appearance: none;
       opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    /* Transparent blocker above the video — intercepts native iOS taps */
+    #hero-video-blocker {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: transparent;
+      cursor: default;
+      -webkit-tap-highlight-color: transparent;
     }
 
     #hero .hero-overlay {
@@ -1592,10 +1606,14 @@
     x5-video-player-type="h5"
     x5-playsinline
     webkit-playsinline
+    x-webkit-airplay="deny"
     aria-hidden="true"
     tabindex="-1">
     <source src="hero%20folder/HERO.mp4" type="video/mp4" />
   </video>
+  <!-- Transparent blocker: sits above the video, below the content overlay.
+       Intercepts any native iOS tap that would reach the video element. -->
+  <div id="hero-video-blocker" aria-hidden="true"></div>
   <div class="hero-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="hero-content">
@@ -2132,21 +2150,53 @@
     link.addEventListener('click', () => toggleMenu(false));
   });
 
-  // ── Hero Video: force autoplay + pause when out of viewport ─────────────
+  // ── Hero Video: force autoplay, block all interaction ───────────────────
   (function() {
     var vid = document.getElementById('hero-video');
     if (!vid) return;
 
+    // Programmatically enforce muted + no controls (belt-and-suspenders)
+    vid.muted   = true;
+    vid.volume  = 0;
+    vid.controls = false;
+
     function tryPlay() {
-      vid.muted = true; // ensure muted before play (required by some browsers)
+      vid.muted = true;
+      vid.volume = 0;
       var p = vid.play();
       if (p !== undefined && p.catch) p.catch(function() {});
     }
 
-    // Attempt play immediately and again once enough data is buffered
+    // Attempt play immediately and whenever buffering allows
     tryPlay();
+    vid.addEventListener('loadedmetadata', tryPlay);
     vid.addEventListener('loadeddata', tryPlay);
     vid.addEventListener('canplay', tryPlay);
+
+    // If anything pauses the video (iOS native tap, system interruption),
+    // resume it immediately — makes the video effectively unpausable
+    vid.addEventListener('pause', function() {
+      if (!vid.ended) tryPlay();
+    });
+
+    // Block clicks/touches directly on the video element
+    ['click','touchstart','touchend','mousedown','pointerdown'].forEach(function(ev) {
+      vid.addEventListener(ev, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }, { passive: false });
+    });
+
+    // Also block the transparent overlay div
+    var blocker = document.getElementById('hero-video-blocker');
+    if (blocker) {
+      ['click','touchstart','touchend','mousedown','pointerdown'].forEach(function(ev) {
+        blocker.addEventListener(ev, function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }, { passive: false });
+      });
+    }
 
     // Pause when scrolled off screen, resume when back — saves CPU/GPU
     if (window.IntersectionObserver) {
@@ -2156,10 +2206,6 @@
         });
       }, { threshold: 0 }).observe(vid);
     }
-
-    // Block any click/touch from reaching the video (belt-and-suspenders)
-    vid.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); });
-    vid.addEventListener('touchstart', function(e) { e.preventDefault(); e.stopPropagation(); }, { passive: false });
   })();
 </script>
 <!-- ── Scroll to Top ── -->
