@@ -189,11 +189,12 @@
       background: var(--black);
     }
 
-    #hero-canvas {
+    #hero-video {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
+      object-fit: cover;
       display: block;
       pointer-events: none;
     }
@@ -1456,11 +1457,14 @@
   // Lock body scroll while loader is up
   document.documentElement.style.overflow = 'hidden';
 
-  // ── Signal A: hero image loaded ────────────────────────────────────────
-  var heroImg = new Image();
-  heroImg.onload  = function() { heroReady = true; scheduleReveal(); };
-  heroImg.onerror = function() { heroReady = true; scheduleReveal(); }; // fail-safe
-  heroImg.src = 'hero%20folder/scene00001.jpg';
+  // ── Signal A: hero video ready ─────────────────────────────────────────
+  var heroVid = document.getElementById('hero-video');
+  if (heroVid) {
+    heroVid.addEventListener('canplay', function() { heroReady = true; scheduleReveal(); }, { once: true });
+    heroVid.addEventListener('error',   function() { heroReady = true; scheduleReveal(); }, { once: true });
+  } else {
+    heroReady = true;
+  }
 
   // Hard cap — never hang more than MAX_WAIT ms
   setTimeout(function() {
@@ -1490,9 +1494,6 @@
 
     // Mark intro as seen for all future visits
     try { localStorage.setItem('mmga-intro-seen', '1'); } catch(e) {}
-
-    // Signal hero sequence to start (canvas plays behind loader — already buffered)
-    if (window.__heroSignal) window.__heroSignal();
 
     // Unlock scroll
     document.documentElement.style.overflow = '';
@@ -1569,7 +1570,9 @@
 
 <!-- ────────────────── HERO SHADER ────────────────── -->
 <section id="hero">
-  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <video id="hero-video" autoplay muted loop playsinline aria-hidden="true">
+    <source src="hero%20folder/HERO.mp4" type="video/mp4" />
+  </video>
   <div class="hero-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="hero-content">
@@ -2106,207 +2109,15 @@
     link.addEventListener('click', () => toggleMenu(false));
   });
 
-  // ── Hero Image Sequence ──────────────────────────────────────────────────
+  // ── Hero Video: pause when out of viewport to save CPU/GPU ─────────────
   (function() {
-    'use strict';
-
-    var canvas = document.getElementById('hero-canvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // ── Config ──────────────────────────────────────────────────────────────
-    var TOTAL    = 617;
-    var FPS      = 30;
-    var INTERVAL = 1000 / FPS;            // 33.33 ms per frame
-    var BASE     = 'hero%20folder/scene'; // URL-encoded folder name
-
-    // ── State ────────────────────────────────────────────────────────────────
-    var frames      = new Array(TOTAL).fill(null); // Image objects, null = not started
-    var drawn       = -1;      // index of last successfully drawn frame
-    var playing     = false;
-    var rafId       = null;
-    var startTime   = -1;      // performance.now() at playback start (adjusted for pauses)
-    var hiddenAt    = -1;      // timestamp when tab was hidden
-    var playReady   = false;   // true once intro is done (or skipped)
-    var bufferReady = false;   // true once phase-A (first 30 frames) is loaded
-    var inViewport  = true;    // tracks IntersectionObserver state
-
-    // On repeat visits the intro is skipped — hero can play immediately
-    try { if (localStorage.getItem('mmga-intro-seen')) playReady = true; } catch(e) {}
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
-    function pad5(n) { var s = '' + n; while (s.length < 5) s = '0' + s; return s; }
-    function frameUrl(n) { return BASE + pad5(n) + '.jpg'; } // n is 1-indexed
-
-    // ── Canvas sizing ─────────────────────────────────────────────────────────
-    // Use CSS pixels (no DPR) — hero BG doesn't need sub-pixel precision,
-    // and avoiding 2× overdraw saves significant GPU time per frame.
-    function resize() {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-      redraw();
-    }
-
-    // ── Cover-fit draw ────────────────────────────────────────────────────────
-    function redraw() {
-      if (drawn < 0 || !frames[drawn]) return;
-      var img = frames[drawn];
-      if (!img.complete || !img.naturalWidth) return;
-      coverDraw(img);
-    }
-
-    function coverDraw(img) {
-      var cw = canvas.width, ch = canvas.height;
-      var iw = img.naturalWidth, ih = img.naturalHeight;
-      var scale = Math.max(cw / iw, ch / ih);
-      var dw = iw * scale, dh = ih * scale;
-      ctx.drawImage(img, (cw - dw) * 0.5, (ch - dh) * 0.5, dw, dh);
-    }
-
-    // ── Animation tick ────────────────────────────────────────────────────────
-    // Time-based: always shows whichever frame *should* be playing right now.
-    // If that frame isn't loaded yet, holds the last drawn frame (no stutter).
-    function tick(now) {
-      rafId = requestAnimationFrame(tick);
-      if (!playing) return;
-
-      // Initialise clock on first tick after start
-      if (startTime < 0) startTime = now;
-
-      var target = Math.floor((now - startTime) / INTERVAL) % TOTAL;
-      if (target === drawn) return; // still on the correct frame
-
-      var img = frames[target];
-      if (img && img.complete && img.naturalWidth > 0) {
-        drawn = target;
-        coverDraw(img);
-      }
-      // Frame not ready → silently hold the previous one
-    }
-
-    // ── Playback control ──────────────────────────────────────────────────────
-    function startPlayback() {
-      if (playing) return;
-      resize();
-      window.addEventListener('resize', resize);
-      playing   = true;
-      startTime = -1;
-      // Only schedule RAF if the hero is actually on screen
-      if (inViewport && !rafId) rafId = requestAnimationFrame(tick);
-    }
-
-    function tryStart() {
-      if (playReady && bufferReady) startPlayback();
-    }
-
-    // Called by the intro loader's doReveal() on first visit
-    window.__heroSignal = function() {
-      playReady = true;
-      tryStart();
-    };
-
-    // ── Tab-visibility: keep loop position accurate across hidden periods ─────
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        hiddenAt = performance.now();
-      } else if (hiddenAt > 0 && startTime > 0) {
-        startTime += performance.now() - hiddenAt; // slide window forward
-        hiddenAt = -1;
-      }
-    });
-
-    // ── Pause RAF when hero scrolls out of view (saves CPU/GPU) ──────────────
-    // Uses threshold:0 — any pixel of the hero in view counts as "visible".
-    // Resumes from the correct time-based frame position (no restart from frame 1).
-    var heroEl = document.getElementById('hero');
-    if (heroEl && window.IntersectionObserver) {
-      new IntersectionObserver(function(entries) {
-        entries.forEach(function(e) {
-          inViewport = e.isIntersecting;
-          if (inViewport) {
-            // Hero is back on screen — restart RAF if animation is running
-            if (playing && !rafId) rafId = requestAnimationFrame(tick);
-          } else {
-            // Hero has left the viewport — cancel RAF to free CPU/GPU
-            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-          }
-        });
-      }, { threshold: 0 }).observe(heroEl);
-    }
-
-    // ── Controlled parallel loader ────────────────────────────────────────────
-    // Loads frame indices [from, to) (0-indexed) up to `maxCon` at once.
-    // Calls onDone() once every frame in the range has loaded or errored.
-    function loadRange(from, to, maxCon, onDone) {
-      var head   = from; // next index to dispatch
-      var done   = 0;
-      var total  = to - from;
-      if (total <= 0) { if (onDone) onDone(); return; }
-
-      function dispatch() {
-        while (head < to) {
-          // Count active (dispatched but not finished) jobs
-          var active = (head - from) - done;
-          if (active >= maxCon) break;
-
-          var i = head++;
-          if (frames[i] && frames[i].complete) {
-            // Already fully loaded (e.g. from a prior phase overlap)
-            done++;
-            if (done === total && onDone) { onDone(); onDone = null; }
-            continue;
-          }
-          if (frames[i]) {
-            // Image object exists but not yet complete — piggyback on it
-            (function(idx) {
-              var orig = frames[idx].onload;
-              frames[idx].onload = function() {
-                if (orig) orig.call(this);
-                done++;
-                if (done === total && onDone) { onDone(); onDone = null; }
-                dispatch();
-              };
-            })(i);
-            continue;
-          }
-
-          // Fresh load
-          (function(idx) {
-            var img = new Image();
-            frames[idx] = img;
-            img.onload = img.onerror = function() {
-              done++;
-              if (done === total && onDone) { onDone(); onDone = null; }
-              dispatch();
-            };
-            img.src = frameUrl(idx + 1); // filenames are 1-indexed
-          })(i);
-        }
-      }
-      dispatch();
-    }
-
-    // ── Progressive loading pipeline ──────────────────────────────────────────
-    //
-    //  Phase A  [0 .. 30)   first second   ≈  9 MB  — blocks playback
-    //  Phase B  [30 .. 90)  next 2 seconds ≈ 18 MB  — streams while A plays
-    //  Phase C  [90 .. 617) remaining      ≈165 MB  — background, lower concurrency
-    //
-    //  Phase B fires immediately alongside A so its frames arrive early.
-    //  Phase C fires from A's callback so it doesn't compete during critical boot.
-    //
-    loadRange(0, 30, 6, function() {
-      // First 30 frames ready — unlock playback
-      bufferReady = true;
-      tryStart();
-      // Now stream the long tail in background
-      loadRange(90, TOTAL, 4, null);
-    });
-
-    // Phase B in parallel — no overlap with A's range [0,30)
-    loadRange(30, 90, 6, null);
-
+    var vid = document.getElementById('hero-video');
+    if (!vid || !window.IntersectionObserver) return;
+    new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { vid.play(); } else { vid.pause(); }
+      });
+    }, { threshold: 0 }).observe(vid);
   })();
 </script>
 <!-- ── Scroll to Top ── -->
