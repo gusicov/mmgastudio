@@ -48,8 +48,8 @@
   <!-- DM Sans — async (non-render-blocking) to avoid delaying LCP -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" /></noscript>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=optional" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=optional" /></noscript>
   <!-- Hero poster preload — gives browser an LCP candidate immediately -->
   <link rel="preload" as="image" href="hero-poster.jpg" fetchpriority="high" />
 
@@ -215,7 +215,7 @@
     }
 
 
-    /* Mobile hero background img — LCP candidate on mobile (video hidden) */
+    /* Mobile hero background img — LCP candidate; shows while video loads, video plays on top */
     #hero-mobile-bg {
       display: none;
       position: absolute;
@@ -1282,9 +1282,7 @@
       #hero .hero-content { padding: 0 24px; }
       .hero-descriptor p { font-size: 15px; max-width: 300px; line-height: 1.65; }
       .scroll-hint { margin-top: 28px; }
-      /* Hide video on mobile — saves 22MB download */
-      #hero-video, #hero-video-blocker { display: none; }
-      /* Show poster img as LCP candidate on mobile */
+      /* Show poster img as initial LCP background on mobile (video plays on top once loaded) */
       #hero-mobile-bg { display: block; }
       /* No opacity animation on mobile — hero text visible immediately for fast LCP */
       .hero-label, .hero-headline-line, .hero-subtitle, .hero-actions, .hero-scroll-hint {
@@ -1405,7 +1403,7 @@
 
 <!-- ────────────────── HERO SHADER ────────────────── -->
 <section id="hero">
-  <!-- Mobile only: static poster image as LCP candidate (video is hidden on mobile) -->
+  <!-- Poster img: LCP candidate on mobile; sits behind video, visible until video starts playing -->
   <img id="hero-mobile-bg" src="hero-poster.jpg" alt="" aria-hidden="true" fetchpriority="high" />
   <video id="hero-video"
     autoplay muted loop playsinline
@@ -1964,10 +1962,9 @@
     link.addEventListener('click', () => toggleMenu(false));
   });
 
-  // ── Hero Video: force autoplay, block all interaction ───────────────────
+  // ── Hero Video: init after initial paint to reduce TBT ─────────────────
+  (window.requestIdleCallback || function(fn){ setTimeout(fn, 50); })(function() {
   (function() {
-    // Skip entirely on mobile — video is CSS-hidden, no point loading it
-    if (window.matchMedia('(max-width: 768px)').matches) return;
     var vid = document.getElementById('hero-video');
     if (!vid) return;
 
@@ -2023,6 +2020,7 @@
       }, { threshold: 0 }).observe(vid);
     }
   })();
+  }); // end requestIdleCallback
 </script>
 <!-- ── Scroll to Top ── -->
 <button id="scroll-top" aria-label="Back to top">
