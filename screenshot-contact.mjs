@@ -8,22 +8,27 @@ const browser = await puppeteer.launch({
 const page = await browser.newPage();
 await page.setViewport({ width: 1440, height: 900 });
 
-// Project page — should have NO contact section, just footer at bottom
-await page.goto('http://localhost:3000/residentialcomplex1', { waitUntil: 'networkidle0', timeout: 30000 });
-await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+// Homepage contact — verify phone numbers
+await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded', timeout: 30000 });
+await page.evaluate(() => { try { localStorage.setItem('mmga-intro-seen', '1'); } catch(e) {} });
+await page.reload({ waitUntil: 'networkidle0', timeout: 30000 });
+await page.evaluate(() => {
+  const el = document.querySelector('#contact');
+  if (el) el.scrollIntoView({ block: 'start' });
+});
 await new Promise(r => setTimeout(r, 800));
-await page.screenshot({ path: './temporary screenshots/screenshot-77-project-no-contact.png', fullPage: false });
-console.log('77 done');
+await page.screenshot({ path: './temporary screenshots/screenshot-79-homepage-phones.png', fullPage: false });
+console.log('79 done');
 
-// /projects page — should have Let\'s Talk contact section
+// /projects contact — verify phone numbers
 await page.goto('http://localhost:3000/projects', { waitUntil: 'networkidle0', timeout: 30000 });
 await page.evaluate(() => {
   const el = document.querySelector('#contact');
   if (el) el.scrollIntoView({ block: 'start' });
 });
-await new Promise(r => setTimeout(r, 900));
-await page.screenshot({ path: './temporary screenshots/screenshot-78-projects-contact.png', fullPage: false });
-console.log('78 done');
+await new Promise(r => setTimeout(r, 800));
+await page.screenshot({ path: './temporary screenshots/screenshot-80-projects-phones.png', fullPage: false });
+console.log('80 done');
 
 await browser.close();
 console.log('all done');
