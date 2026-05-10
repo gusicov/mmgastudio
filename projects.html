@@ -333,24 +333,26 @@
     /* ── Contact ── */
     #contact {
       background: var(--black);
-      padding: 96px 40px;
+      padding: 112px 48px;
     }
     .contact-inner {
+      max-width: 1200px;
+      margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 80px;
+      gap: 96px;
       align-items: start;
     }
     #contact h2 {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(56px, 7vw, 112px);
+      font-size: clamp(64px, 8vw, 128px);
       line-height: 0.9;
       letter-spacing: -0.02em;
       color: white;
       margin-top: 16px;
     }
     .contact-sub {
-      font-size: 14px;
+      font-size: 16px;
       color: rgba(255,255,255,0.4);
       line-height: 1.75;
       font-weight: 300;
@@ -364,8 +366,8 @@
       gap: 12px;
     }
     .contact-detail a {
-      font-size: 13px;
-      color: rgba(255,255,255,0.5);
+      font-size: 15px;
+      color: rgba(255,255,255,0.72);
       text-decoration: none;
       letter-spacing: 0.02em;
       transition: color 0.2s;
@@ -375,42 +377,48 @@
     }
     .contact-detail a:hover { color: white; }
     .contact-detail a span {
-      font-size: 11px;
+      font-size: 13px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.25);
-      width: 60px;
+      color: rgba(255,255,255,0.45);
+      width: 100px;
       flex-shrink: 0;
     }
-
-    .form-group { margin-bottom: 14px; }
+    .section-label-white {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      font-weight: 500;
+    }
+    .form-group { margin-bottom: 16px; }
     .form-input {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.14);
       border-radius: 3px;
-      padding: 14px 18px;
+      padding: 16px 20px;
       color: white;
       width: 100%;
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 300;
       outline: none;
       transition: border-color 0.2s, background 0.2s;
       -webkit-font-smoothing: antialiased;
     }
-    .form-input::placeholder { color: rgba(255,255,255,0.25); }
-    .form-input:focus { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.06); }
-    textarea.form-input { resize: none; min-height: 140px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-input::placeholder { color: rgba(255,255,255,0.45); }
+    .form-input:focus { border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.08); }
+    textarea.form-input { resize: none; min-height: 160px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-submit {
       width: 100%;
-      padding: 16px;
+      padding: 18px;
       background: white;
       color: var(--black);
       border: none;
       border-radius: 3px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -530,8 +538,10 @@
       .projects-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
       .p-card.w2, .p-card.w3 { grid-column: span 2; }
       /* square aspect-ratio handles sizing */
-      #contact { padding: 60px 20px; }
-      .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+      #contact { padding: 64px 20px; }
+      .contact-inner { grid-template-columns: 1fr; gap: 44px; }
+      .contact-sub { max-width: 100%; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
       footer { padding: 24px 20px; flex-direction: column; gap: 16px; text-align: center; }
     }
   </style>
@@ -769,41 +779,48 @@
       <h2>Let's<br/>talk</h2>
       <p class="contact-sub">Tell us about your project. We'll get back to you within 24 hours with an initial scope and quote.</p>
       <div class="contact-detail">
-        <a href="mailto:hello@mmgastudio.com">
+        <a href="mailto:office@mmgastudio.com">
           <span>Email</span>
-          hello@mmgastudio.com
+          office@mmgastudio.com
         </a>
-        <a href="#">
-          <span>Based</span>
-          Bucharest, Romania
+        <a href="tel:+40724132413">
+          <span>Phone</span>
+          +40 724 132 413
         </a>
-        <a href="#">
-          <span>Available</span>
+        <a href="tel:+17138709353">
+          <span></span>
+          +1 713 870 9353
+        </a>
+        <div style="font-size:15px;color:rgba(255,255,255,0.72);letter-spacing:0.02em;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);width:100px;flex-shrink:0;">Available</span>
           Worldwide
-        </a>
+        </div>
       </div>
     </div>
     <div class="reveal">
-      <form onsubmit="return false;">
+      <form id="contact-form" action="https://formspree.io/f/xwvrjjoz" method="POST">
         <div class="form-row">
           <div class="form-group">
-            <input class="form-input" type="text" placeholder="First name" />
+            <input class="form-input" type="text" name="first_name" placeholder="First name" required />
           </div>
           <div class="form-group">
-            <input class="form-input" type="text" placeholder="Last name" />
+            <input class="form-input" type="text" name="last_name" placeholder="Last name" required />
           </div>
         </div>
         <div class="form-group">
-          <input class="form-input" type="email" placeholder="Email address" />
+          <input class="form-input" type="email" name="email" placeholder="Email address" required />
         </div>
         <div class="form-group">
-          <input class="form-input" type="text" placeholder="Project type (e.g. Residential exterior)" />
+          <input class="form-input" type="text" name="project_type" placeholder="Project type (e.g. Residential exterior)" />
         </div>
         <div class="form-group">
-          <textarea class="form-input" placeholder="Tell us about your project..."></textarea>
+          <textarea class="form-input" name="message" placeholder="Tell us about your project..."></textarea>
         </div>
         <button class="form-submit" type="submit">Send Message</button>
       </form>
+      <div id="form-success" style="display:none; margin-top:24px; padding:20px 24px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.85); font-size:14px; letter-spacing:0.04em; line-height:1.6;">
+        Thank you — we'll get back to you within 24 hours.
+      </div>
     </div>
   </div>
 </section>
@@ -915,6 +932,39 @@
     }
     mobileMenu.querySelectorAll('.mobile-nav-link').forEach(function(link) {
       link.addEventListener('click', function() { toggleMenu(false); });
+    });
+  })();
+</script>
+<script>
+  // Contact form — Formspree AJAX submit
+  (function() {
+    var contactForm = document.getElementById('contact-form');
+    var formSuccess = document.getElementById('form-success');
+    if (!contactForm) return;
+    contactForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var btn = contactForm.querySelector('.form-submit');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      try {
+        var res = await fetch(contactForm.action, {
+          method: 'POST',
+          body: new FormData(contactForm),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          contactForm.style.display = 'none';
+          formSuccess.style.display = 'block';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Send Message';
+          alert('Something went wrong. Please try again.');
+        }
+      } catch(err) {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+        alert('Something went wrong. Please try again.');
+      }
     });
   })();
 </script>

@@ -8,41 +8,22 @@ const browser = await puppeteer.launch({
 const page = await browser.newPage();
 await page.setViewport({ width: 1440, height: 900 });
 
-// Project page contact section
+// Project page — should have NO contact section, just footer at bottom
 await page.goto('http://localhost:3000/residentialcomplex1', { waitUntil: 'networkidle0', timeout: 30000 });
 await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-await new Promise(r => setTimeout(r, 1000));
-await page.screenshot({ path: './temporary screenshots/screenshot-73-project-contact.png', fullPage: false });
-console.log('73 done');
+await new Promise(r => setTimeout(r, 800));
+await page.screenshot({ path: './temporary screenshots/screenshot-77-project-no-contact.png', fullPage: false });
+console.log('77 done');
 
-// Homepage contact section (skip loader)
-await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded', timeout: 30000 });
-await page.evaluate(() => { try { localStorage.setItem('mmga-intro-seen', '1'); } catch(e) {} });
-await page.reload({ waitUntil: 'networkidle0', timeout: 30000 });
+// /projects page — should have Let\'s Talk contact section
+await page.goto('http://localhost:3000/projects', { waitUntil: 'networkidle0', timeout: 30000 });
 await page.evaluate(() => {
   const el = document.querySelector('#contact');
   if (el) el.scrollIntoView({ block: 'start' });
 });
-await new Promise(r => setTimeout(r, 800));
-await page.screenshot({ path: './temporary screenshots/screenshot-74-homepage-contact.png', fullPage: false });
-console.log('74 done');
-
-// Hero video new clip
-await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded', timeout: 30000 });
-await page.evaluate(() => { try { localStorage.setItem('mmga-intro-seen', '1'); } catch(e) {} });
-await page.reload({ waitUntil: 'networkidle0', timeout: 30000 });
-await new Promise(r => setTimeout(r, 2500));
-await page.screenshot({ path: './temporary screenshots/screenshot-75-hero-new-video.png', fullPage: false });
-console.log('75 done');
-
-// Homepage contact - scrolled to very bottom to show both phones
-await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded', timeout: 30000 });
-await page.evaluate(() => { try { localStorage.setItem('mmga-intro-seen', '1'); } catch(e) {} });
-await page.reload({ waitUntil: 'networkidle0', timeout: 30000 });
-await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
 await new Promise(r => setTimeout(r, 900));
-await page.screenshot({ path: './temporary screenshots/screenshot-76-homepage-contact-full.png', fullPage: false });
-console.log('76 done');
+await page.screenshot({ path: './temporary screenshots/screenshot-78-projects-contact.png', fullPage: false });
+console.log('78 done');
 
 await browser.close();
 console.log('all done');
