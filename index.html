@@ -4,14 +4,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MMGA Studio — Architectural Rendering</title>
+  <title>MMGA Studio — Architectural Visualization Studio</title>
+  <meta name="description" content="MMGA Studio is an architectural visualization studio creating photorealistic CGI renderings, architectural animations, and immersive visual storytelling for architects and developers worldwide." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.mmgastudio.com/" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.mmgastudio.com/" />
+  <meta property="og:title" content="MMGA Studio — Architectural Visualization Studio" />
+  <meta property="og:description" content="Photorealistic CGI rendering and spatial storytelling that turns architectural vision into images clients believe in." />
+  <meta property="og:image" content="https://www.mmgastudio.com/hero-poster.jpg" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="720" />
+  <meta property="og:site_name" content="MMGA Studio" />
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MMGA Studio — Architectural Visualization Studio" />
+  <meta name="twitter:description" content="Photorealistic CGI rendering and spatial storytelling that turns architectural vision into images clients believe in." />
+  <meta name="twitter:image" content="https://www.mmgastudio.com/hero-poster.jpg" />
+  <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" />
   <link rel="shortcut icon" href="/favicon.ico" />
   <link rel="icon" href="/favicon.png" type="image/png" />
+  <!-- Fonts — Bebas Neue self-hosted for zero cross-origin latency (LCP critical) -->
+  <style>
+    @font-face {
+      font-family: 'Bebas Neue';
+      font-style: normal;
+      font-weight: 400;
+      font-display: optional;
+      src: url('/fonts/bebas-neue-latin-ext.woff2') format('woff2');
+      unicode-range: U+0100-024F,U+0259,U+1E00-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;
+    }
+    @font-face {
+      font-family: 'Bebas Neue';
+      font-style: normal;
+      font-weight: 400;
+      font-display: optional;
+      src: url('/fonts/bebas-neue-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+  </style>
+  <!-- DM Sans — async (non-render-blocking) to avoid delaying LCP -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" /></noscript>
+  <!-- Hero poster preload — gives browser an LCP candidate immediately -->
+  <link rel="preload" as="image" href="hero-poster.jpg" fetchpriority="high" />
 
   <style>
     :root {
@@ -175,6 +215,17 @@
     }
 
 
+    /* Mobile hero background img — LCP candidate on mobile (video hidden) */
+    #hero-mobile-bg {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
     /* ── Hero Shader ── */
     #hero {
       position: relative;
@@ -270,7 +321,7 @@
       color: rgba(255,255,255,0.35);
       margin-bottom: 28px;
       opacity: 0;
-      animation: heroFadeIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+      animation: heroFadeIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
     }
 
     .hero-headline {
@@ -286,10 +337,10 @@
       opacity: 0;
     }
     .hero-headline-line:nth-child(1) {
-      animation: heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.45s forwards;
+      animation: heroFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.18s forwards;
     }
     .hero-headline-line:nth-child(2) {
-      animation: heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.6s forwards;
+      animation: heroFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
     }
 
     .hero-subtitle {
@@ -301,7 +352,7 @@
       max-width: 460px;
       margin: 0 0 44px;
       opacity: 0;
-      animation: heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
+      animation: heroFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.42s forwards;
     }
 
     .hero-actions {
@@ -311,7 +362,7 @@
       flex-wrap: wrap;
       justify-content: center;
       opacity: 0;
-      animation: heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.9s forwards;
+      animation: heroFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.54s forwards;
     }
 
     .hero-btn-primary {
@@ -367,7 +418,7 @@
       align-items: center;
       gap: 10px;
       opacity: 0;
-      animation: heroFadeIn 1s cubic-bezier(0.22,1,0.36,1) 1.3s forwards;
+      animation: heroFadeIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.7s forwards;
     }
     .hero-scroll-hint .line {
       width: 24px;
@@ -1231,6 +1282,15 @@
       #hero .hero-content { padding: 0 24px; }
       .hero-descriptor p { font-size: 15px; max-width: 300px; line-height: 1.65; }
       .scroll-hint { margin-top: 28px; }
+      /* Hide video on mobile — saves 22MB download */
+      #hero-video, #hero-video-blocker { display: none; }
+      /* Show poster img as LCP candidate on mobile */
+      #hero-mobile-bg { display: block; }
+      /* No opacity animation on mobile — hero text visible immediately for fast LCP */
+      .hero-label, .hero-headline-line, .hero-subtitle, .hero-actions, .hero-scroll-hint {
+        opacity: 1 !important;
+        animation: none !important;
+      }
 
       /* ── Marquee ── */
       .marquee-item { gap: 36px; padding: 0 36px; }
@@ -1345,9 +1405,12 @@
 
 <!-- ────────────────── HERO SHADER ────────────────── -->
 <section id="hero">
+  <!-- Mobile only: static poster image as LCP candidate (video is hidden on mobile) -->
+  <img id="hero-mobile-bg" src="hero-poster.jpg" alt="" aria-hidden="true" fetchpriority="high" />
   <video id="hero-video"
     autoplay muted loop playsinline
-    preload="auto"
+    preload="none"
+    poster="hero-poster.jpg"
     disablepictureinpicture
     disableremoteplayback
     x5-video-player-type="h5"
@@ -1424,7 +1487,7 @@
   <div class="projects-grid">
     <!-- Card 1 — tall -->
     <a href="/residentialcomplex1" class="project-card tall reveal" style="text-decoration:none;display:block;">
-      <img src="brand_assets/Projects/1/5.jpg" alt="Residential Complex" style="min-height:100%;height:100%;" decoding="async" />
+      <img src="brand_assets/Projects/1/5.jpg" alt="Residential Complex" style="min-height:100%;height:100%;" loading="lazy" decoding="async" />
       <div class="project-overlay">
         <div class="project-info">
           <div class="project-num">01</div>
@@ -1903,6 +1966,8 @@
 
   // ── Hero Video: force autoplay, block all interaction ───────────────────
   (function() {
+    // Skip entirely on mobile — video is CSS-hidden, no point loading it
+    if (window.matchMedia('(max-width: 768px)').matches) return;
     var vid = document.getElementById('hero-video');
     if (!vid) return;
 
