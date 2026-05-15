@@ -32,8 +32,8 @@
       z-index: 50; pointer-events: none;
     }
     #logo img {
-      height: 40px;
-      opacity: 0.75;
+      height: 54px;
+      opacity: 0.88;
       filter: brightness(0) invert(1);
       display: block;
     }
@@ -41,18 +41,18 @@
     /* ── VR button ── */
     #vr-btn {
       position: fixed; top: 14px; right: 16px;
-      width: 34px; height: 34px; border-radius: 8px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      color: rgba(255,255,255,0.5);
+      width: 52px; height: 52px; border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      color: rgba(255,255,255,0.88);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; z-index: 60;
       transition: background 0.2s, color 0.2s, border-color 0.2s;
     }
-    #vr-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); }
+    #vr-btn:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); color: #fff; }
     #vr-btn:active { transform: scale(0.94); }
-    #vr-btn svg { width: 17px; height: 17px; }
+    #vr-btn svg { width: 26px; height: 26px; }
 
     /* ── Hint ── */
     #hint {
