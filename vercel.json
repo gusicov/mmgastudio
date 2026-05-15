@@ -13,6 +13,7 @@
     { "src": "/residentialcomplex3", "dest": "/residentialcomplex3.html" },
     { "src": "/kindergarten",        "dest": "/kindergarten.html" },
     { "src": "/industrialhall2",     "dest": "/industrialhall2.html" },
+    { "src": "/demovrproject",       "dest": "/demovrproject.html" },
     { "src": "/robots\\.txt",        "dest": "/robots.txt" },
     { "src": "/sitemap\\.xml",       "dest": "/sitemap.xml" },
     { "handle": "filesystem" },

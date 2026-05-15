@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>VR Walkthrough — MMGA Studio</title>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    canvas.a-canvas { display: block !important; }
+
+    /* ── Loading ── */
+    #loading {
+      position: fixed; inset: 0; background: #000;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+      z-index: 300; transition: opacity 0.6s ease;
+    }
+    #loading.hidden { opacity: 0; pointer-events: none; }
+    .dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.3); animation: p 1.2s ease-in-out infinite; }
+    .dot:nth-child(2) { animation-delay: 0.18s; }
+    .dot:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes p { 0%,100%{opacity:.1;transform:scale(.5)} 50%{opacity:.7;transform:scale(1)} }
+
+    /* ── Fade ── */
+    #fade { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 200; transition: opacity 0.22s ease; }
+    #fade.in { opacity: 1; pointer-events: auto; }
+
+    /* ── Logo ── */
+    #logo {
+      position: fixed; top: 16px; left: 20px;
+      z-index: 50; pointer-events: none;
+    }
+    #logo img {
+      height: 40px;
+      opacity: 0.75;
+      filter: brightness(0) invert(1);
+      display: block;
+    }
+
+    /* ── VR button ── */
+    #vr-btn {
+      position: fixed; top: 14px; right: 16px;
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      color: rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 60;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    #vr-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); }
+    #vr-btn:active { transform: scale(0.94); }
+    #vr-btn svg { width: 17px; height: 17px; }
+
+    /* ── Hint ── */
+    #hint {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      z-index: 50; pointer-events: none;
+      animation: hf 3.5s ease-in-out 2s forwards;
+      white-space: nowrap;
+    }
+    @keyframes hf { 0%{opacity:1} 65%{opacity:1} 100%{opacity:0} }
+
+    /* ── Bottom nav wrapper ── */
+    #nav-wrap {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 50;
+      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.18) 75%, transparent 100%);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* ── Room name ── */
+    #room-label {
+      text-align: center;
+      padding: 12px 0 7px;
+      font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(255,255,255,0.42);
+      transition: opacity 0.25s;
+    }
+
+    /* ── Thumbnails ── */
+    #nav-bar {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 16px 16px; gap: 5px;
+      overflow-x: auto; overflow-y: hidden;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    #nav-bar::-webkit-scrollbar { display: none; }
+
+    .room-card {
+      flex-shrink: 0;
+      width: 62px; height: 38px;
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.06);
+      opacity: 0.5;
+      transition: opacity 0.2s, border-color 0.2s, transform 0.18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .room-card:hover { opacity: 0.78; border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
+    .room-card.active { opacity: 1; border-color: rgba(255,255,255,0.6); transform: none; }
+
+    .room-thumb { width: 100%; height: 100%; object-fit: cover; display: block; background: #0e0e0e; }
+
+    /* ── Error ── */
+    #error-msg {
+      position: fixed; top: 62px; left: 50%; transform: translateX(-50%);
+      background: rgba(160,25,25,0.82); backdrop-filter: blur(8px);
+      color: #fff; font-size: 10.5px; letter-spacing: 0.06em;
+      padding: 7px 14px; border-radius: 5px;
+      display: none; z-index: 100; white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+<a-scene
+  id="vr-scene"
+  vr-mode-ui="enabled: false"
+  loading-screen="enabled: false"
+  renderer="colorManagement: true; highRefreshRate: true; antialias: true; logarithmicDepthBuffer: false"
+  background="color: #000">
+  <a-entity id="rig">
+    <a-camera
+      id="cam"
+      look-controls="touchEnabled: true; magicWindowTrackingEnabled: true; reverseMouseDrag: false"
+      wasd-controls="enabled: false"
+      fov="75" near="0.1" far="10000">
+    </a-camera>
+  </a-entity>
+</a-scene>
+
+<div id="loading">
+  <div class="dot"></div>
+  <div class="dot"></div>
+  <div class="dot"></div>
+</div>
+
+<div id="fade"></div>
+
+<div id="logo">
+  <img src="brand_assets/logout 4.png" alt="MMGA Studio" />
+</div>
+
+<button id="vr-btn" title="Enter VR">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <rect x="2" y="8" width="20" height="12" rx="3"/>
+    <circle cx="8.5" cy="14" r="2.2" fill="currentColor" stroke="none"/>
+    <circle cx="15.5" cy="14" r="2.2" fill="currentColor" stroke="none"/>
+    <path d="M11.2 14h1.6"/>
+    <path d="M12 5v3"/>
+    <path d="M9 5h6"/>
+  </svg>
+</button>
+
+<div id="hint">Drag to explore</div>
+
+<div id="error-msg"></div>
+
+<div id="nav-wrap">
+  <div id="room-label">—</div>
+  <div id="nav-bar"></div>
+</div>
+
+<script>
+'use strict';
+
+const ROOMS = [
+  { name: 'Office',          base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZPIUWIAHILUFX7ZZPIQ8.0_12000x2000.jpg_' },
+  { name: 'Kitchen',         base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZKYUWIAHILUFX7ZZPAI8.0_12000x2000.jpg_' },
+  { name: 'Living Room · 1', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMY5IUWLUFQLUFX7ZF43Y8.0_12000x2000.jpg_' },
+  { name: 'Corridor · 1',    base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMYRIUWLRTELUFX7ZEFKQ8.0_12000x2000.jpg_' },
+  { name: 'Bathroom',        base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZIQUWJWLQLUFX7ZMQQY8.0_12000x2000.jpg_' },
+  { name: 'Corridor · 2',    base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMYXQUWIARQLUFX7ZG4PI8.0_12000x2000.jpg_' },
+  { name: 'Living Room · 2', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMY3AUWIARQLUFX7ZG72Y8.0_12000x2000.jpg_' },
+];
+
+let currentIndex = -1;
+let isTransitioning = false;
+
+const sceneEl   = document.getElementById('vr-scene');
+const fade      = document.getElementById('fade');
+const loadingEl = document.getElementById('loading');
+const roomLabel = document.getElementById('room-label');
+const navBar    = document.getElementById('nav-bar');
+const vrBtn     = document.getElementById('vr-btn');
+const errorEl   = document.getElementById('error-msg');
+
+/* Custom cubemap loader — mirrors specific faces horizontally in-plane via canvas.
+   mirrorSet: Set of face indices (0-5) to apply horizontal mirror to.               */
+function loadCubeTexture(faceUrls, mirrorSet, onLoad, onError) {
+  const images = new Array(6);
+  let pending = 6;
+  let failed = false;
+
+  function tryFinish() {
+    if (failed) return;
+    if (--pending === 0) {
+      const tex = new THREE.CubeTexture(images);
+      tex.needsUpdate = true;
+      onLoad(tex);
+    }
+  }
+
+  faceUrls.forEach((url, i) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onerror = () => { if (!failed) { failed = true; onError(); } };
+    img.onload = () => {
+      if (!mirrorSet.has(i)) {
+        images[i] = img;
+        tryFinish();
+        return;
+      }
+      /* Horizontal flip via 2D canvas */
+      const cv = document.createElement('canvas');
+      cv.width = img.width; cv.height = img.height;
+      const ctx = cv.getContext('2d');
+      ctx.translate(img.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, 0, 0);
+      const flipped = new Image();
+      flipped.onerror = () => { if (!failed) { failed = true; onError(); } };
+      flipped.onload = () => { images[i] = flipped; tryFinish(); };
+      cv.toBlob(blob => { flipped.src = URL.createObjectURL(blob); });
+    };
+    img.src = url;
+  });
+}
+
+sceneEl.addEventListener('loaded', () => {
+  buildNav();
+  goToRoom(0, true);
+});
+
+function buildNav() {
+  ROOMS.forEach((room, i) => {
+    const card = document.createElement('div');
+    card.className = 'room-card';
+    const thumbUrl = room.base + 'f?x-oss-process=image/resize,w_160|image/quality,q_75';
+    card.innerHTML = `<img class="room-thumb" src="${thumbUrl}" alt="${room.name}" loading="lazy" />`;
+    card.addEventListener('click', () => {
+      if (isTransitioning || i === currentIndex) return;
+      goToRoom(i);
+    });
+    navBar.appendChild(card);
+  });
+}
+
+function updateNav(index) {
+  document.querySelectorAll('.room-card').forEach((c, i) => c.classList.toggle('active', i === index));
+  const activeCard = navBar.children[index];
+  if (activeCard) activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  roomLabel.textContent = ROOMS[index].name;
+}
+
+function goToRoom(index, instant) {
+  if (isTransitioning) return;
+  if (index === currentIndex) return;
+  isTransitioning = true;
+
+  const room = ROOMS[index];
+
+  /*  KRPano face names: _f _b _l _r _u _d
+      Three.js CubeTextureLoader order: [px, nx, py, ny, pz, nz]
+      X-axis: l↔r swap (coordinate handedness)
+      Y-axis: u/d stay in correct slots but are horizontally mirrored in-plane
+      Z-axis: unchanged                                                        */
+  const faces = [
+    room.base + 'l',  // px
+    room.base + 'r',  // nx
+    room.base + 'u',  // py  (up — correct slot, image mirrored in-plane)
+    room.base + 'd',  // ny  (down — correct slot, image mirrored in-plane)
+    room.base + 'b',  // pz
+    room.base + 'f',  // nz
+  ];
+
+  /* Indices 2 (up) and 3 (down) get a horizontal mirror applied on canvas */
+  const mirrorSet = new Set([2, 3]);
+
+  const doLoad = () => {
+    updateNav(index);
+    loadCubeTexture(
+      faces,
+      mirrorSet,
+      (cubeTexture) => {
+        sceneEl.object3D.background = cubeTexture;
+        currentIndex = index;
+        requestAnimationFrame(() => {
+          fade.classList.remove('in');
+          setTimeout(() => { isTransitioning = false; }, 260);
+        });
+        if (loadingEl && !loadingEl.classList.contains('hidden')) {
+          setTimeout(() => loadingEl.classList.add('hidden'), 100);
+        }
+      },
+      () => {
+        showError('Could not load panorama.');
+        isTransitioning = false;
+        fade.classList.remove('in');
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    );
+  };
+
+  fade.classList.add('in');
+  setTimeout(doLoad, instant ? 80 : 220);
+}
+
+vrBtn.addEventListener('click', async () => {
+  if (navigator.xr) {
+    const supported = await navigator.xr.isSessionSupported('immersive-vr').catch(() => false);
+    if (supported) {
+      sceneEl.is('vr-mode') ? sceneEl.exitVR() : sceneEl.enterVR();
+      return;
+    }
+  }
+  document.fullscreenElement
+    ? document.exitFullscreen().catch(() => {})
+    : document.documentElement.requestFullscreen().catch(() => {});
+});
+
+sceneEl.addEventListener('enter-vr', () => { vrBtn.style.opacity = '0'; });
+sceneEl.addEventListener('exit-vr',  () => { vrBtn.style.opacity = ''; });
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'd') goToRoom((currentIndex + 1) % ROOMS.length);
+  if (e.key === 'ArrowLeft'  || e.key === 'a') goToRoom((currentIndex - 1 + ROOMS.length) % ROOMS.length);
+  if (e.key === 'f' || e.key === 'F') document.documentElement.requestFullscreen?.().catch(() => {});
+});
+
+function showError(msg) {
+  errorEl.textContent = msg;
+  errorEl.style.display = 'block';
+  setTimeout(() => { errorEl.style.display = 'none'; }, 5000);
+}
+</script>
+</body>
+</html>
