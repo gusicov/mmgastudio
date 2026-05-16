@@ -217,12 +217,12 @@ function loadCubeTexture(faceUrls, mirrorSet, onLoad, onError) {
         tryFinish();
         return;
       }
-      /* Horizontal flip (left↔right) in-plane via 2D canvas */
+      /* Vertical flip (top↔bottom) in-plane via 2D canvas */
       const cv = document.createElement('canvas');
       cv.width = img.width; cv.height = img.height;
       const ctx = cv.getContext('2d');
-      ctx.translate(img.width, 0);
-      ctx.scale(-1, 1);
+      ctx.translate(0, img.height);
+      ctx.scale(1, -1);
       ctx.drawImage(img, 0, 0);
       const flipped = new Image();
       flipped.onerror = () => { if (!failed) { failed = true; onError(); } };
