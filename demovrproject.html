@@ -107,6 +107,25 @@
 
     .room-thumb { width: 100%; height: 100%; object-fit: cover; display: block; background: #0e0e0e; }
 
+    /* ── Floor separator ── */
+    .floor-sep {
+      flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 20px; height: 38px; gap: 3px;
+      margin: 0 2px;
+    }
+    .floor-sep-line {
+      width: 1px; flex: 1;
+      background: rgba(255,255,255,0.12);
+    }
+    .floor-sep-label {
+      font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      line-height: 1;
+    }
+
     /* ── Error ── */
     #error-msg {
       position: fixed; top: 62px; left: 50%; transform: translateX(-50%);
@@ -171,13 +190,20 @@
 'use strict';
 
 const ROOMS = [
-  { name: 'Office',          base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZPIUWIAHILUFX7ZZPIQ8.0_12000x2000.jpg_' },
-  { name: 'Kitchen',         base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZKYUWIAHILUFX7ZZPAI8.0_12000x2000.jpg_' },
-  { name: 'Living Room · 1', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMY5IUWLUFQLUFX7ZF43Y8.0_12000x2000.jpg_' },
-  { name: 'Corridor · 1',    base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMYRIUWLRTELUFX7ZEFKQ8.0_12000x2000.jpg_' },
-  { name: 'Bathroom',        base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZIQUWJWLQLUFX7ZMQQY8.0_12000x2000.jpg_' },
-  { name: 'Corridor · 2',    base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMYXQUWIARQLUFX7ZG4PI8.0_12000x2000.jpg_' },
-  { name: 'Living Room · 2', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMY3AUWIARQLUFX7ZG72Y8.0_12000x2000.jpg_' },
+  // Ground Floor (GF)
+  { name: 'Office',           floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZPIUWIAHILUFX7ZZPIQ8.0_12000x2000.jpg_' },
+  { name: 'Kitchen',          floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZKYUWIAHILUFX7ZZPAI8.0_12000x2000.jpg_' },
+  { name: 'Living Room · 1',  floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMY5IUWLUFQLUFX7ZF43Y8.0_12000x2000.jpg_' },
+  { name: 'Corridor · 1',     floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMYRIUWLRTELUFX7ZEFKQ8.0_12000x2000.jpg_' },
+  { name: 'Bathroom',         floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZIQUWJWLQLUFX7ZMQQY8.0_12000x2000.jpg_' },
+  { name: 'Corridor · 2',     floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMYXQUWIARQLUFX7ZG4PI8.0_12000x2000.jpg_' },
+  { name: 'Living Room · 2',  floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMY3AUWIARQLUFX7ZG72Y8.0_12000x2000.jpg_' },
+  // Level 2 (2F)
+  { name: 'Bathroom',         floor: '2F', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MM2JQUWIP3WLUFX7Z3YNA8.0_12000x2000.jpg_' },
+  { name: 'Bedroom · 1',      floor: '2F', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MM6VAUWIQHELUFX7ZGQKY8.0_12000x2000.jpg_' },
+  { name: 'Kids Bedroom · 1', floor: '2F', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MM7IAUWIP3WLUFX7ZYOUY8.0_12000x2000.jpg_' },
+  { name: 'Kids Bedroom · 2', floor: '2F', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MM6WAUWIP3WLUFX7ZYJLI8.0_12000x2000.jpg_' },
+  { name: 'Bedroom · 2',      floor: '2F', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MM7NAUWIQHELUFX7ZGROQ8.0_12000x2000.jpg_' },
 ];
 
 let currentIndex = -1;
@@ -239,7 +265,16 @@ sceneEl.addEventListener('loaded', () => {
 });
 
 function buildNav() {
+  let prevFloor = null;
   ROOMS.forEach((room, i) => {
+    if (prevFloor !== null && room.floor !== prevFloor) {
+      const sep = document.createElement('div');
+      sep.className = 'floor-sep';
+      sep.innerHTML = `<div class="floor-sep-line"></div><div class="floor-sep-label">${room.floor}</div><div class="floor-sep-line"></div>`;
+      navBar.appendChild(sep);
+    }
+    prevFloor = room.floor;
+
     const card = document.createElement('div');
     card.className = 'room-card';
     const thumbUrl = room.base + 'f?x-oss-process=image/resize,w_160|image/quality,q_75';
@@ -253,10 +288,12 @@ function buildNav() {
 }
 
 function updateNav(index) {
-  document.querySelectorAll('.room-card').forEach((c, i) => c.classList.toggle('active', i === index));
-  const activeCard = navBar.children[index];
+  const cards = document.querySelectorAll('.room-card');
+  cards.forEach((c, i) => c.classList.toggle('active', i === index));
+  const activeCard = cards[index];
   if (activeCard) activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  roomLabel.textContent = ROOMS[index].name;
+  const room = ROOMS[index];
+  roomLabel.textContent = room.floor !== 'GF' ? `${room.floor}  ·  ${room.name}` : room.name;
 }
 
 function goToRoom(index, instant) {
