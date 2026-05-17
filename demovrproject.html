@@ -195,7 +195,6 @@ const ROOMS = [
   { name: 'Kitchen',          floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZKYUWIAHILUFX7ZZPAI8.0_12000x2000.jpg_' },
   { name: 'Living Room · 1',  floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMY5IUWLUFQLUFX7ZF43Y8.0_12000x2000.jpg_' },
   { name: 'Corridor · 1',     floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMYRIUWLRTELUFX7ZEFKQ8.0_12000x2000.jpg_' },
-  { name: 'Bathroom',         floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMZIQUWJWLQLUFX7ZMQQY8.0_12000x2000.jpg_' },
   { name: 'Corridor · 2',     floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMYXQUWIARQLUFX7ZG4PI8.0_12000x2000.jpg_' },
   { name: 'Living Room · 2',  floor: 'GF', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MMY3AUWIARQLUFX7ZG72Y8.0_12000x2000.jpg_' },
   // Level 2 (2F)
@@ -206,8 +205,29 @@ const ROOMS = [
   { name: 'Bedroom · 2',      floor: '2F', base: 'https://qhrenderpicoss.kujiale.com/r/2026/05/15/L3D917S57ENDO4MM7NAUWIQHELUFX7ZGROQ8.0_12000x2000.jpg_' },
 ];
 
+/* Navigation hotspots — azimuth angles from KRPano API (0°=front, clockwise).
+   Only skin_hotspotstyle entries included.                                    */
+const HOTSPOTS = [
+  /* 0 Office        */ [{ ath: 262.38, to: 3 }],
+  /* 1 Kitchen       */ [{ ath: 143.38, to: 3 }],
+  /* 2 Living Room 1 */ [{ ath: 117.82, to: 3 }, { ath: 39.45, to: 5 }],
+  /* 3 Corridor 1    */ [{ ath: 262.02, to: 2 }, { ath: 267.68, to: 0 }, { ath: 279.61, to: 1 }, { ath: 279.69, to: 4 }],
+  /* 4 Corridor 2    */ [{ ath: 9.69, to: 3 }, { ath: 96.99, to: 2 }, { ath: 129.13, to: 0 }, { ath: 189.14, to: 1 }],
+  /* 5 Living Room 2 */ [{ ath: 100.27, to: 3 }, { ath: 129.45, to: 2 }],
+  /* 6  Bathroom 2F       */ [],
+  /* 7  Bedroom 1 2F      */ [],
+  /* 8  Kids Bedroom 1 2F */ [{ ath: 22.56, to: 9 }],
+  /* 9  Kids Bedroom 2 2F */ [{ ath: 292.56, to: 8 }],
+  /* 10 Bedroom 2 2F      */ [],
+];
+
+const HOTSPOT_DIST = 4.5;
+const HOTSPOT_SIZE = 0.90;   // plane size in world units
+const HOTSPOT_BASE_Y = 1.2;  // door-level height (camera at y=0)
+
 let currentIndex = -1;
 let isTransitioning = false;
+let hotspotMeshes = [];
 
 const sceneEl   = document.getElementById('vr-scene');
 const fade      = document.getElementById('fade');
@@ -217,8 +237,187 @@ const navBar    = document.getElementById('nav-bar');
 const vrBtn     = document.getElementById('vr-btn');
 const errorEl   = document.getElementById('error-msg');
 
-/* Custom cubemap loader — mirrors specific faces horizontally in-plane via canvas.
-   mirrorSet: Set of face indices (0-5) to apply horizontal mirror to.               */
+/* ── Hotspot canvas texture — solid circle, reads on any background ── */
+function makeHotspotCanvas(name, hovered) {
+  const cv = document.createElement('canvas');
+  cv.width = 256; cv.height = 256;
+  const ctx = cv.getContext('2d');
+  const cx = 128, cy = 128;
+  const R = 90;  // outer radius of visible disc
+
+  // Soft outer glow (wide transparent halo)
+  const glow = ctx.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 1.3);
+  glow.addColorStop(0, 'rgba(0,0,0,0.25)');
+  glow.addColorStop(1, 'rgba(0,0,0,0.00)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 1.3, 0, Math.PI * 2);
+  ctx.fillStyle = glow;
+  ctx.fill();
+
+  // Solid dark disc — clearly visible on any wall color
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fillStyle = hovered ? 'rgba(12,12,12,0.72)' : 'rgba(8,8,8,0.56)';
+  ctx.fill();
+
+  // Outer ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, R - 2, 0, Math.PI * 2);
+  ctx.strokeStyle = hovered ? 'rgba(255,255,255,0.90)' : 'rgba(255,255,255,0.60)';
+  ctx.lineWidth = hovered ? 2.4 : 1.8;
+  ctx.stroke();
+
+  // Inner ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 0.72, 0, Math.PI * 2);
+  ctx.strokeStyle = hovered ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Center dot
+  ctx.beginPath();
+  ctx.arc(cx, cy, hovered ? 18 : 14, 0, Math.PI * 2);
+  ctx.fillStyle = hovered ? '#ffffff' : 'rgba(255,255,255,0.92)';
+  ctx.fill();
+
+  return cv;
+}
+
+/* ── Hotspot management ── */
+function clearHotspots() {
+  hotspotMeshes.forEach(m => {
+    sceneEl.object3D.remove(m);
+    m.geometry.dispose();
+    m.userData.normalTex.dispose();
+    m.userData.hoverTex.dispose();
+    m.material.dispose();
+  });
+  hotspotMeshes = [];
+}
+
+/* Spread overlapping hotspots vertically, centered around eye level (y=0). */
+function spreadHotspotsY(spots) {
+  // Group indices that are within 10° of each other
+  const assigned = new Array(spots.length).fill(-1);
+  const groups = [];
+  for (let i = 0; i < spots.length; i++) {
+    if (assigned[i] >= 0) continue;
+    const g = [i];
+    assigned[i] = groups.length;
+    for (let j = i + 1; j < spots.length; j++) {
+      if (assigned[j] < 0 && Math.abs(spots[j].ath - spots[i].ath) < 10) {
+        g.push(j);
+        assigned[j] = groups.length;
+      }
+    }
+    groups.push(g);
+  }
+  // Assign y values centered around HOTSPOT_BASE_Y with 0.42 step
+  const result = [...spots];
+  const STEP = 0.42;
+  groups.forEach(g => {
+    const n = g.length;
+    g.forEach((idx, k) => {
+      result[idx] = { ...spots[idx], y: HOTSPOT_BASE_Y + ((n - 1) / 2 - k) * STEP };
+    });
+  });
+  return result;
+}
+
+function buildHotspots(roomIndex) {
+  clearHotspots();
+  const spots = HOTSPOTS[roomIndex];
+  if (!spots || spots.length === 0) return;
+
+  const placed = spreadHotspotsY(spots);
+
+  placed.forEach(spot => {
+    const athRad = (spot.ath * Math.PI) / 180;
+    const x = HOTSPOT_DIST * Math.sin(athRad);
+    const z = -HOTSPOT_DIST * Math.cos(athRad);
+
+    const normalTex = new THREE.CanvasTexture(makeHotspotCanvas(ROOMS[spot.to].name, false));
+    const hoverTex  = new THREE.CanvasTexture(makeHotspotCanvas(ROOMS[spot.to].name, true));
+
+    const mat = new THREE.MeshBasicMaterial({
+      map: normalTex, transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(HOTSPOT_SIZE, HOTSPOT_SIZE), mat);
+    mesh.position.set(x, spot.y, z);
+    mesh.userData = { targetIndex: spot.to, normalTex, hoverTex, isHotspot: true };
+
+    sceneEl.object3D.add(mesh);
+    hotspotMeshes.push(mesh);
+  });
+}
+
+/* ── Billboard loop — hotspots always face camera ── */
+(function loop() {
+  requestAnimationFrame(loop);
+  const cam = sceneEl.camera;
+  if (!cam || hotspotMeshes.length === 0) return;
+  const p = new THREE.Vector3();
+  cam.getWorldPosition(p);
+  hotspotMeshes.forEach(m => m.lookAt(p));
+})();
+
+/* ── Raycaster helpers ── */
+const _ray = new THREE.Raycaster();
+
+function hitHotspot(clientX, clientY) {
+  const canvas = document.querySelector('canvas.a-canvas');
+  if (!canvas || !sceneEl.camera || hotspotMeshes.length === 0) return null;
+  const r = canvas.getBoundingClientRect();
+  _ray.setFromCamera({
+    x:  (clientX - r.left) / r.width  * 2 - 1,
+    y: -((clientY - r.top)  / r.height * 2 - 1),
+  }, sceneEl.camera);
+  const hits = _ray.intersectObjects(hotspotMeshes, false);
+  return hits.length > 0 ? hits[0].object : null;
+}
+
+/* ── Hover + drag detection ── */
+let hoveredMesh = null;
+let _downX = 0, _downY = 0, _dragged = false;
+
+document.addEventListener('mousedown', e => {
+  _downX = e.clientX; _downY = e.clientY; _dragged = false;
+});
+
+document.addEventListener('mousemove', e => {
+  // Mark as drag only when button is held and moved > 4px
+  if (e.buttons & 1) {
+    if (Math.abs(e.clientX - _downX) > 4 || Math.abs(e.clientY - _downY) > 4) _dragged = true;
+  }
+
+  if (isTransitioning) return;
+  const hit = hitHotspot(e.clientX, e.clientY);
+  if (hit === hoveredMesh) return;
+  if (hoveredMesh) {
+    hoveredMesh.material.map = hoveredMesh.userData.normalTex;
+    hoveredMesh.material.needsUpdate = true;
+    hoveredMesh.scale.set(1, 1, 1);
+  }
+  hoveredMesh = hit;
+  const canvas = document.querySelector('canvas.a-canvas');
+  if (hit) {
+    hit.material.map = hit.userData.hoverTex;
+    hit.material.needsUpdate = true;
+    hit.scale.set(1.12, 1.12, 1.12);
+    if (canvas) canvas.style.cursor = 'pointer';
+  } else {
+    if (canvas) canvas.style.cursor = '';
+  }
+});
+
+/* ── Click ── */
+document.addEventListener('click', e => {
+  if (_dragged || isTransitioning) return;
+  const hit = hitHotspot(e.clientX, e.clientY);
+  if (hit && hit.userData.isHotspot) goToRoom(hit.userData.targetIndex);
+});
+
+/* ── Custom cubemap loader ── */
 function loadCubeTexture(faceUrls, mirrorSet, onLoad, onError) {
   const images = new Array(6);
   let pending = 6;
@@ -238,12 +437,7 @@ function loadCubeTexture(faceUrls, mirrorSet, onLoad, onError) {
     img.crossOrigin = 'anonymous';
     img.onerror = () => { if (!failed) { failed = true; onError(); } };
     img.onload = () => {
-      if (!mirrorSet.has(i)) {
-        images[i] = img;
-        tryFinish();
-        return;
-      }
-      /* Vertical + horizontal flip (180° rotation) in-plane via 2D canvas */
+      if (!mirrorSet.has(i)) { images[i] = img; tryFinish(); return; }
       const cv = document.createElement('canvas');
       cv.width = img.width; cv.height = img.height;
       const ctx = cv.getContext('2d');
@@ -274,7 +468,6 @@ function buildNav() {
       navBar.appendChild(sep);
     }
     prevFloor = room.floor;
-
     const card = document.createElement('div');
     card.className = 'room-card';
     const thumbUrl = room.base + 'f?x-oss-process=image/resize,w_160|image/quality,q_75';
@@ -302,32 +495,23 @@ function goToRoom(index, instant) {
   isTransitioning = true;
 
   const room = ROOMS[index];
-
-  /*  KRPano face names: _f _b _l _r _u _d
-      Three.js CubeTextureLoader order: [px, nx, py, ny, pz, nz]
-      X-axis: l↔r swap (coordinate handedness)
-      Y-axis: u/d stay in correct slots but are horizontally mirrored in-plane
-      Z-axis: unchanged                                                        */
   const faces = [
     room.base + 'l',  // px
     room.base + 'r',  // nx
-    room.base + 'u',  // py  (up — correct slot, image mirrored in-plane)
-    room.base + 'd',  // ny  (down — correct slot, image mirrored in-plane)
+    room.base + 'u',  // py
+    room.base + 'd',  // ny
     room.base + 'b',  // pz
     room.base + 'f',  // nz
   ];
-
-  /* Indices 2 (up) and 3 (down) get a horizontal mirror applied on canvas */
   const mirrorSet = new Set([2, 3]);
 
   const doLoad = () => {
     updateNav(index);
-    loadCubeTexture(
-      faces,
-      mirrorSet,
+    loadCubeTexture(faces, mirrorSet,
       (cubeTexture) => {
         sceneEl.object3D.background = cubeTexture;
         currentIndex = index;
+        buildHotspots(index);
         requestAnimationFrame(() => {
           fade.classList.remove('in');
           setTimeout(() => { isTransitioning = false; }, 260);
@@ -345,6 +529,7 @@ function goToRoom(index, instant) {
     );
   };
 
+  clearHotspots();
   fade.classList.add('in');
   setTimeout(doLoad, instant ? 80 : 220);
 }
