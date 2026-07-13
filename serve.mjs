@@ -21,6 +21,7 @@ const mimeTypes = {
   '.webp': 'image/webp',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
+  '.pdf': 'application/pdf',
 };
 
 const server = http.createServer((req, res) => {
